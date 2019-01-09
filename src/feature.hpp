@@ -46,14 +46,29 @@ struct feature {
   uvec ord;
 
   std::string prox_type;
+  
+  /// Destructor
+ ~feature(){
+   // if(x != nullptr)
+   // delete(x);
+   // if(basis != nullptr)
+   // delete(basis);
+   // if(fitted != nullptr)
+   // delete(fitted);
+   // if(buffer != nullptr)
+   // delete(buffer);
+   // if(count != nullptr)
+   // delete(count);
+ }
+  
  ///TODO:Fix basis expansion
   feature(std::string type, vec *covariates) {
     prox_type = type;
     if (type == "fl") {
       x = covariates;
-      fitted = new vec(x->n_rows);
+      fitted =new vec(x->n_rows);
       fitted->fill(0);
-      buffer = new vec(x->n_rows);
+      buffer =new vec(x->n_rows);
       buffer->fill(0);
       ord = sort_index(*x);
       prox_type = "fl";

@@ -95,6 +95,9 @@ Rcpp::List gspam_full(arma::mat data, arma::vec y,
   std::vector<feature *> features = feature_builder(data, prox_type,y_resid);
   update_residuals(features,y_resid,loss_type);
   vec lambdapath = lambda_path(features, y_resid, alpha);
+  for(int i=0; i<features.size();i++){
+    delete(features.at(i));
+  }
   return gspam_c_vec(data, y, prox_type,loss_type, lambdapath, alpha * lambdapath);
 };
 
@@ -115,6 +118,9 @@ Rcpp::List get_lambdas(arma::mat data, arma::vec y,
   update_residuals(features,y_resid,loss_type);
   vec lambda1 = lambda_path(features, y_resid, alpha);
   vec lambda2 = alpha*lambda1;
+  for(int i=0; i<features.size();i++){
+    delete(features.at(i));
+  }
   return Rcpp::List::create(
       Rcpp::Named("lambda1", lambda1), Rcpp::Named("lambda2", lambda2));
 };

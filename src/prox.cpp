@@ -18,13 +18,13 @@ using namespace arma;
 ///@param[in] resid
 /// Pointer to residual object
 void update_residuals(std::vector<feature *> features, residual *resid, std::string loss_type) {
-  vec *temp = new vec(resid->y_->n_rows);
-  temp->fill(0);
+  vec temp(resid->y_->n_rows);
+  temp.fill(0);
   for (int i = 0; i < features.size(); i++){
-    *temp = *temp + *features.at(i)->fitted;
+    temp = temp + *features.at(i)->fitted;
   };
   *resid->resid_old = *resid->resid;
-  *resid->resid = grad(*resid->y_,*temp,loss_type);
+  *resid->resid = grad(*resid->y_,temp,loss_type);
   vec resdiff = *resid->resid - *resid->resid_old;
   resid->resdiffnorm = norm(resdiff);
 };
@@ -123,22 +123,24 @@ vec fit(feature *x, residual *y, double lambda1, double lambda2, double t) {
 };
 
 mat new_fit(std::vector<feature *> features, residual *y, double lambda1,
-            double lambda2, double t) {
-  mat *temp = new mat(y->resid->n_rows, features.size());
-  temp->fill(0);
+            double lambda2, double t, vec to_fit) {
+  mat temp(y->resid->n_rows, features.size());
+  temp.fill(0);
   for (int i = 0; i < features.size(); i++) {
-    temp->col(i) = fit(features.at(i), y, lambda1, lambda2, t);
+    if(to_fit.at(i)==1){
+    temp.col(i) = fit(features.at(i), y, lambda1, lambda2, t);
+    }
   }
-  return *temp;
+  return temp;
 };
 
 mat get_fit_mat(std::vector<feature *> features) {
-  mat *temp = new mat(features.at(0)->fitted->n_rows, features.size());
-  temp->fill(0);
+  mat temp(features.at(0)->fitted->n_rows, features.size());
+  temp.fill(0);
   for (int i = 0; i < features.size(); i++) {
-    temp->col(i) = *features.at(i)->fitted;
+    temp.col(i) = *features.at(i)->fitted;
   }
-  return *temp;
+  return temp;
 };
 
 bool linesearch(residual *y, mat old_fit, mat new_fit, double t, std::string type) {
@@ -169,19 +171,19 @@ bool linesearch(residual *y, mat old_fit, mat new_fit, double t, std::string typ
 ///@param[in] t
 /// Step size
 double fit_step(std::vector<feature *> features, residual *resid, double lambda1,
-              double lambda2, double t) {
+              double lambda2, double t, vec to_fit) {
   mat old_fit = mat(resid->y_->n_rows, features.size());
   mat prox_fit = mat(resid->y_->n_rows, features.size());
   old_fit = get_fit_mat(features);
-  prox_fit = new_fit(features, resid, lambda1, lambda2, t);
+  prox_fit = new_fit(features, resid, lambda1, lambda2, t,to_fit);
   while (linesearch(resid, old_fit, prox_fit, t,resid->loss_type)) {
     t *= .8;
-    prox_fit = new_fit(features, resid, lambda1, lambda2, t);
+    prox_fit = new_fit(features, resid, lambda1, lambda2, t,to_fit);
   }
   //std::cout<<"RUNNING FIT w step stize : "<<t<<endl;
   int n = resid->resid->n_rows;
   for (int i = 0; i < features.size(); i++) {
-    *features.at(i)->fitted = fit(features.at(i), resid, lambda1, lambda2, t);
+    *features.at(i)->fitted = prox_fit.col(i);
   };
   //std::cout << "Fit of feature 9:"<< features.at(9)->fitted->at(0)<<endl;
   update_residuals(features, resid, resid-> loss_type);

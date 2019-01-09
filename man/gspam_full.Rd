@@ -14,7 +14,7 @@ gspam_full(data, y, prox_type, loss_type, alpha)
 
 \item{type}{of prox to use}
 
-\item{scalar}{value lambda1=alpha*lambda2}
+\item{scalar}{value lambda2=alpha*lambda1}
 }
 \description{
 Fit model as specified by user for calculated range of lambda

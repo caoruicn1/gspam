@@ -14,7 +14,7 @@ vec fl_prox(feature *fused, residual *y, double lambda1, double lambda2,
 vec std_prox(feature *fused, residual *y, double lambda1, double t);
 
 double fit_step(std::vector<feature *> features, residual *resid, double lambda1,
-              double lambda2, double t);
+              double lambda2, double t,vec to_fit);
 
 double interpolate(feature *x_sort, double sort_point);
 
@@ -30,7 +30,7 @@ bool linesearch(feature *x, residual *y, double lambda1, double lambda2,
 
 
 mat new_fit(std::vector<feature *> features, residual *y, double lambda1,
-            double lambda2, double t);
+            double lambda2, double t, vec to_fit);
 
 mat get_fit_mat(std::vector<feature *> features);
 

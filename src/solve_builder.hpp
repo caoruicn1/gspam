@@ -9,7 +9,7 @@
 using namespace arma;
 
 arma::mat single_solver(std::vector<feature *> features, residual *y,
-                        double lambda1, double lambda2);
+                        double lambda1, double lambda2,vec ever_active);
 field<arma::mat> path_solver(std::vector<feature *> features, residual *y,
                              vec lambda1, vec lambda2);
 std::vector<feature *> feature_builder(arma::mat data,
