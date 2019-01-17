@@ -7,9 +7,9 @@
 //
 // [[Rcpp::depends(RcppArmadillo)]]
 
-#include "solve_builder.hpp"
 #include <iostream>
 #include <string>
+#include "solve_builder.hpp"
 
 // Generalized Sparse Additive Model Solver
 //' @title Default Generalized Sparse Additive Model Solver with single
@@ -25,9 +25,10 @@
 //' @export
 // [[Rcpp::export(name="gspam_c")]]
 Rcpp::List gspam_c(arma::mat data, arma::vec y,
-                   std::vector<std::string> prox_type,std::string loss_type, double lambda1 = 0.0,
-                   double lambda2 = 0.0) {
-  arma::mat gsp_fitted = gspam_solver(data, y, prox_type,loss_type, lambda1, lambda2);
+                   std::vector<std::string> prox_type, std::string loss_type,
+                   double lambda1 = 0.0, double lambda2 = 0.0) {
+  arma::mat gsp_fitted =
+      gspam_solver(data, y, prox_type, loss_type, lambda1, lambda2);
   return Rcpp::List::create(Rcpp::Named("data", data),
                             Rcpp::Named("fitted", gsp_fitted),
                             Rcpp::Named("y", y));
@@ -47,13 +48,14 @@ Rcpp::List gspam_c(arma::mat data, arma::vec y,
 //' @export
 // [[Rcpp::export(name="gspam_c_vec")]]
 Rcpp::List gspam_c_vec(arma::mat data, arma::vec y,
-                       std::vector<std::string> prox_type,std::string loss_type, arma::vec lambda1,
+                       std::vector<std::string> prox_type,
+                       std::string loss_type, arma::vec lambda1,
                        arma::vec lambda2) {
   if (lambda1.n_rows != lambda2.n_rows) {
     throw "Variational and sparsity vectors must be of same size.";
   }
   arma::field<mat> gsp_fitted =
-      gspam_path_solver(data, y, prox_type,loss_type, lambda1, lambda2);
+      gspam_path_solver(data, y, prox_type, loss_type, lambda1, lambda2);
   return Rcpp::List::create(
       Rcpp::Named("data", data), Rcpp::Named("fitted", gsp_fitted),
       Rcpp::Named("y", y), Rcpp::Named("lambda1", lambda1),
@@ -70,9 +72,10 @@ Rcpp::List gspam_c_vec(arma::mat data, arma::vec y,
 //' @export
 // [[Rcpp::export(name="interpolate")]]
 double interpolate(arma::mat x, arma::mat fitted, arma::vec sort_point) {
-  double new_fitted = fitted.at(0,0);
+  double new_fitted = fitted.at(0, 0);
   for (int i = 0; i < x.n_cols; i++) {
-    new_fitted += interpolate_vec(x.col(i), fitted.col(i+1), sort_point.at(i));
+    new_fitted +=
+        interpolate_vec(x.col(i), fitted.col(i + 1), sort_point.at(i));
   }
   return new_fitted;
 }
@@ -90,15 +93,17 @@ double interpolate(arma::mat x, arma::mat fitted, arma::vec sort_point) {
 //' @export
 // [[Rcpp::export(name="gspam_full")]]
 Rcpp::List gspam_full(arma::mat data, arma::vec y,
-                 std::vector<std::string> prox_type, std::string loss_type,double alpha) {
-  residual *y_resid = new residual(&y,loss_type);
-  std::vector<feature *> features = feature_builder(data, prox_type,y_resid);
-  update_residuals(features,y_resid,loss_type);
+                      std::vector<std::string> prox_type, std::string loss_type,
+                      double alpha) {
+  residual *y_resid = new residual(&y, loss_type);
+  std::vector<feature *> features = feature_builder(data, prox_type, y_resid);
+  update_residuals(features, y_resid, loss_type);
   vec lambdapath = lambda_path(features, y_resid, alpha);
-  for(int i=0; i<features.size();i++){
-    delete(features.at(i));
+  for (int i = 0; i < features.size(); i++) {
+    delete (features.at(i));
   }
-  return gspam_c_vec(data, y, prox_type,loss_type, lambdapath, alpha * lambdapath);
+  return gspam_c_vec(data, y, prox_type, loss_type, lambdapath,
+                     alpha * lambdapath);
 };
 
 
@@ -112,15 +117,16 @@ Rcpp::List gspam_full(arma::mat data, arma::vec y,
 //' @export
 // [[Rcpp::export(name="get_lambdas")]]
 Rcpp::List get_lambdas(arma::mat data, arma::vec y,
-                      std::vector<std::string> prox_type, std::string loss_type,double alpha) {
-  residual *y_resid = new residual(&y,loss_type);
-  std::vector<feature *> features = feature_builder(data, prox_type,y_resid);
-  update_residuals(features,y_resid,loss_type);
+                       std::vector<std::string> prox_type,
+                       std::string loss_type, double alpha) {
+  residual *y_resid = new residual(&y, loss_type);
+  std::vector<feature *> features = feature_builder(data, prox_type, y_resid);
+  update_residuals(features, y_resid, loss_type);
   vec lambda1 = lambda_path(features, y_resid, alpha);
-  vec lambda2 = alpha*lambda1;
-  for(int i=0; i<features.size();i++){
-    delete(features.at(i));
+  vec lambda2 = alpha * lambda1;
+  for (int i = 0; i < features.size(); i++) {
+    delete (features.at(i));
   }
-  return Rcpp::List::create(
-      Rcpp::Named("lambda1", lambda1), Rcpp::Named("lambda2", lambda2));
+  return Rcpp::List::create(Rcpp::Named("lambda1", lambda1),
+                            Rcpp::Named("lambda2", lambda2));
 };

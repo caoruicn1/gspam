@@ -7,18 +7,18 @@
 //
 // [[Rcpp::depends(RcppArmadillo)]]
 
-#include <iostream>
 #include <math.h>
+#include <iostream>
 using namespace arma;
 
 vec soft_scale(vec x, double lambda);
 
 
-double quadloss(vec y, vec theta) ;
+double quadloss(vec y, vec theta);
 
 double logloss(vec y, vec theta);
-  
-vec quadgrad(vec y, vec theta);  
+
+vec quadgrad(vec y, vec theta);
 
 vec loggrad(vec y, vec theta);
 

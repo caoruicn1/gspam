@@ -7,24 +7,25 @@
 //
 // [[Rcpp::depends(RcppArmadillo)]]
 
-#include "ryansdp.hpp"
-#include <iostream>
 #include <math.h>
+#include <iostream>
 #include "prox.hpp"
+#include "ryansdp.hpp"
 using namespace arma;
 ///@brief Update the residuals for a residual object, given a vector of features
 ///@param[in] features
 /// A vector of pointers to features.
 ///@param[in] resid
 /// Pointer to residual object
-void update_residuals(std::vector<feature *> features, residual *resid, std::string loss_type) {
+void update_residuals(std::vector<feature *> features, residual *resid,
+                      std::string loss_type) {
   vec temp(resid->y_->n_rows);
   temp.fill(0);
-  for (int i = 0; i < features.size(); i++){
+  for (int i = 0; i < features.size(); i++) {
     temp = temp + *features.at(i)->fitted;
   };
   *resid->resid_old = *resid->resid;
-  *resid->resid = grad(*resid->y_,temp,loss_type);
+  *resid->resid = grad(*resid->y_, temp, loss_type);
   vec resdiff = *resid->resid - *resid->resid_old;
   resid->resdiffnorm = norm(resdiff);
 };
@@ -42,7 +43,6 @@ void update_residuals(std::vector<feature *> features, residual *resid, std::str
 /// Step size
 vec fl_prox(feature *fused, residual *y, double lambda1, double lambda2,
             double t) {
-
   /// Sort residuals and fitted values
   sort_by(y->resid, fused->buffer, fused->ord);
   sort_by(fused->fitted, fused->buffer, fused->ord);
@@ -50,14 +50,14 @@ vec fl_prox(feature *fused, residual *y, double lambda1, double lambda2,
   vec jresid = *fused->fitted - *y->resid * t;
   double *y_ptr = jresid.memptr();
   double *fitted_ptr = fused_fit.memptr();
-  tf_dp(fused->fitted->n_rows, y_ptr, t * lambda2*fused->fitted->n_rows,
+  tf_dp(fused->fitted->n_rows, y_ptr, t * lambda2 * fused->fitted->n_rows,
         fitted_ptr);
   unsort_by(y->resid, fused->buffer, fused->ord);
   unsort_by(&fused_fit, fused->buffer, fused->ord);
   unsort_by(fused->fitted, fused->buffer, fused->ord);
-///cout << fused_fit<<endl;
-  fused_fit = soft_scale(fused_fit, lambda1 * t*sqrt(fused->fitted->n_rows));
-  ///cout << fused_fit<<endl;
+  /// cout << fused_fit<<endl;
+  fused_fit = soft_scale(fused_fit, lambda1 * t * sqrt(fused->fitted->n_rows));
+  /// cout << fused_fit<<endl;
   return fused_fit;
 };
 ///@brief Solve the proximal problem with no variational penalty.
@@ -70,14 +70,14 @@ vec fl_prox(feature *fused, residual *y, double lambda1, double lambda2,
 ///@param[in] t
 /// Step size
 vec std_prox(feature *fused, residual *y, double lambda1, double t) {
-  vec jresid = *fused->fitted - *y->resid * t ; // y->resid->n_rows;
+  vec jresid = *fused->fitted - *y->resid * t;  // y->resid->n_rows;
   jresid = (fused->Q * fused->Q.t()) * jresid;
-  jresid = soft_scale(jresid, lambda1 * t *sqrt(fused->fitted->size()));
+  jresid = soft_scale(jresid, lambda1 * t * sqrt(fused->fitted->size()));
   return jresid;
 };
 
 ///@brief Solve the proximal problem with no variational penalty for categorical
-///data.
+/// data.
 ///@param[in] fused
 /// Pointer to feature object
 ///@param[in] y
@@ -104,8 +104,8 @@ vec cat_prox(feature *fused, residual *y, double lambda1, double t) {
   return *fitted;
 };
 
-vec intercept_prox(feature *x, residual *y, double t){
-  return *x->fitted - (sum(*y->resid) * t/ y->resid->n_rows);
+vec intercept_prox(feature *x, residual *y, double t) {
+  return *x->fitted - (sum(*y->resid) * t / y->resid->n_rows);
 }
 
 
@@ -116,8 +116,8 @@ vec fit(feature *x, residual *y, double lambda1, double lambda2, double t) {
     return std_prox(x, y, lambda1, t);
   else if (x->prox_type == "cat")
     return cat_prox(x, y, lambda1, t);
-  else if (x -> prox_type == "intercept")
-    return intercept_prox(x,y,t);
+  else if (x->prox_type == "intercept")
+    return intercept_prox(x, y, t);
   else
     throw("Unsupported prox type.");
 };
@@ -127,8 +127,8 @@ mat new_fit(std::vector<feature *> features, residual *y, double lambda1,
   mat temp(y->resid->n_rows, features.size());
   temp.fill(0);
   for (int i = 0; i < features.size(); i++) {
-    if(to_fit.at(i)==1){
-    temp.col(i) = fit(features.at(i), y, lambda1, lambda2, t);
+    if (to_fit.at(i) == 1) {
+      temp.col(i) = fit(features.at(i), y, lambda1, lambda2, t);
     }
   }
   return temp;
@@ -143,16 +143,17 @@ mat get_fit_mat(std::vector<feature *> features) {
   return temp;
 };
 
-bool linesearch(residual *y, mat old_fit, mat new_fit, double t, std::string type) {
+bool linesearch(residual *y, mat old_fit, mat new_fit, double t,
+                std::string type) {
   vec ones_vec = ones<vec>(new_fit.n_cols);
-  vec new_fit_t = (new_fit*ones_vec);
-  vec old_fit_t = (old_fit*ones_vec);
-  double actual = loss(*y->y_ ,new_fit_t, type);
-  double approx = loss(*y->y_ , old_fit_t,type);
-  vec temp1 = grad(*y->y_,old_fit_t, y->loss_type);
-  mat temp2 = (new_fit-old_fit);
-  temp1 = temp2.t()*temp1;
-  double grad_term =  sum(temp1);
+  vec new_fit_t = (new_fit * ones_vec);
+  vec old_fit_t = (old_fit * ones_vec);
+  double actual = loss(*y->y_, new_fit_t, type);
+  double approx = loss(*y->y_, old_fit_t, type);
+  vec temp1 = grad(*y->y_, old_fit_t, y->loss_type);
+  mat temp2 = (new_fit - old_fit);
+  temp1 = temp2.t() * temp1;
+  double grad_term = sum(temp1);
   double frob = norm(new_fit - old_fit, "fro");
   approx += (1.0 / (2.0 * t)) * pow(frob, 2);
   approx += grad_term;
@@ -170,28 +171,25 @@ bool linesearch(residual *y, mat old_fit, mat new_fit, double t, std::string typ
 /// Variational penalty
 ///@param[in] t
 /// Step size
-double fit_step(std::vector<feature *> features, residual *resid, double lambda1,
-              double lambda2, double t, vec to_fit) {
+double fit_step(std::vector<feature *> features, residual *resid,
+                double lambda1, double lambda2, double t, vec to_fit) {
   mat old_fit = mat(resid->y_->n_rows, features.size());
   mat prox_fit = mat(resid->y_->n_rows, features.size());
   old_fit = get_fit_mat(features);
-  prox_fit = new_fit(features, resid, lambda1, lambda2, t,to_fit);
-  while (linesearch(resid, old_fit, prox_fit, t,resid->loss_type)) {
+  prox_fit = new_fit(features, resid, lambda1, lambda2, t, to_fit);
+  while (linesearch(resid, old_fit, prox_fit, t, resid->loss_type)) {
     t *= .8;
-    prox_fit = new_fit(features, resid, lambda1, lambda2, t,to_fit);
+    prox_fit = new_fit(features, resid, lambda1, lambda2, t, to_fit);
   }
-  //std::cout<<"RUNNING FIT w step stize : "<<t<<endl;
+  // std::cout<<"RUNNING FIT w step stize : "<<t<<endl;
   int n = resid->resid->n_rows;
   for (int i = 0; i < features.size(); i++) {
     *features.at(i)->fitted = prox_fit.col(i);
   };
-  //std::cout << "Fit of feature 9:"<< features.at(9)->fitted->at(0)<<endl;
-  update_residuals(features, resid, resid-> loss_type);
+  // std::cout << "Fit of feature 9:"<< features.at(9)->fitted->at(0)<<endl;
+  update_residuals(features, resid, resid->loss_type);
   return t;
 };
-
-
-
 
 
 ///@brief Interpolate a fitted value for a single feature
@@ -223,9 +221,9 @@ double interpolate(feature *x_sort, double sort_point) {
   if (u != l) {
     /// TODO: If there is a more compact way to do linear interpolation, do so.
     fitted = ((sort_point - x_sort->x->at(l)) /
-      (x_sort->x->at(u) - x_sort->x->at(l))) *
-        (x_sort->fitted->at(u) - x_sort->fitted->at(l)) +
-        x_sort->fitted->at(l);
+              (x_sort->x->at(u) - x_sort->x->at(l))) *
+                 (x_sort->fitted->at(u) - x_sort->fitted->at(l)) +
+             x_sort->fitted->at(l);
   } else if (u == l)
     fitted = x_sort->fitted->at(l);
   unsort_by(x_sort->x, x_sort->buffer, x_sort->ord);
@@ -239,7 +237,6 @@ double interpolate(feature *x_sort, double sort_point) {
 /// Vector of new x values to fit
 ///@return New fitted value for vector of x's
 double predict(std::vector<feature *> features, vec new_x) {
-  
   if (features.size() != new_x.n_rows)
     throw "New X vector does not have p elements.";
   vec temp = new_x;
@@ -280,11 +277,11 @@ double interpolate_vec(arma::vec x, arma::vec fitted, double sort_point) {
     return new_fitted;
   }
   while (u - l > 1) {
-    if (sort_point < x.at((l+u) / 2)) {
+    if (sort_point < x.at((l + u) / 2)) {
       u = (l + u) / 2;
-    } else if (sort_point > x.at((l+u) / 2)) {
+    } else if (sort_point > x.at((l + u) / 2)) {
       l = (l + u) / 2;
-    } else if (sort_point == x.at((l+u) / 2)) {
+    } else if (sort_point == x.at((l + u) / 2)) {
       l = (l + u) / 2;
       u = (l + u) / 2;
     }
@@ -293,12 +290,11 @@ double interpolate_vec(arma::vec x, arma::vec fitted, double sort_point) {
   if (u != l) {
     /// TODO: If there is a more compact way to do linear interpolation, do so.
     new_fitted = ((sort_point - x.at(l)) / (x.at(u) - x.at(l))) *
-      (fitted.at(u) - fitted.at(l)) +
-      fitted.at(l);
+                     (fitted.at(u) - fitted.at(l)) +
+                 fitted.at(l);
   } else if (u == l)
     new_fitted = fitted.at(l);
   unsort_by(&x, temp_ord, ord);
   unsort_by(&fitted, temp_ord, ord);
   return new_fitted;
 };
-

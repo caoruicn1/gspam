@@ -7,14 +7,15 @@ using namespace arma;
 
 vec soft_scale(vec x, double lambda);
 
-void update_residuals(std::vector<feature *> features, residual *resid, std::string loss_type);
+void update_residuals(std::vector<feature *> features, residual *resid,
+                      std::string loss_type);
 
 vec fl_prox(feature *fused, residual *y, double lambda1, double lambda2,
             double t);
 vec std_prox(feature *fused, residual *y, double lambda1, double t);
 
-double fit_step(std::vector<feature *> features, residual *resid, double lambda1,
-              double lambda2, double t,vec to_fit);
+double fit_step(std::vector<feature *> features, residual *resid,
+                double lambda1, double lambda2, double t, vec to_fit);
 
 double interpolate(feature *x_sort, double sort_point);
 
@@ -26,7 +27,7 @@ double interpolate_vec(vec x, vec fitted, double sort_point);
 
 
 bool linesearch(feature *x, residual *y, double lambda1, double lambda2,
-                   double t);
+                double t);
 
 
 mat new_fit(std::vector<feature *> features, residual *y, double lambda1,
@@ -53,7 +54,7 @@ double quadloss(vec y, vec theta);
 
 double logloss(vec y, vec theta);
 
-vec quadgrad(vec y, vec theta);  
+vec quadgrad(vec y, vec theta);
 
 vec loggrad(vec y, vec theta);
 

@@ -9,17 +9,19 @@
 using namespace arma;
 
 arma::mat single_solver(std::vector<feature *> features, residual *y,
-                        double lambda1, double lambda2,vec ever_active);
+                        double lambda1, double lambda2, vec *ever_active);
 field<arma::mat> path_solver(std::vector<feature *> features, residual *y,
                              vec lambda1, vec lambda2);
 std::vector<feature *> feature_builder(arma::mat data,
-                                       std::vector<std::string> prox_type, residual *y);
+                                       std::vector<std::string> prox_type,
+                                       residual *y);
 
 field<arma::mat> gspam_path_solver(mat data, vec y,
-                                   std::vector<std::string> prox_type,std::string loss_type,
-                                   vec lambda1, vec lambda2);
+                                   std::vector<std::string> prox_type,
+                                   std::string loss_type, vec lambda1,
+                                   vec lambda2);
 arma::mat gspam_solver(arma::mat data, arma::vec y,
-                       std::vector<std::string> prox_type, std::string loss_type, double lambda1,
-                       double lambda2);
+                       std::vector<std::string> prox_type,
+                       std::string loss_type, double lambda1, double lambda2);
 arma::vec lambda_path(std::vector<feature *> features, residual *y,
                       double alpha);

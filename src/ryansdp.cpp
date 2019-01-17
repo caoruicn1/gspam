@@ -10,11 +10,9 @@ void soft_thresh(int n, double *y, double lam, double *beta);
 
 void tf_dp(int n, double *y, double lam, double *beta) {
   // Take care of a few trivial cases
-  if (n == 0)
-    return;
+  if (n == 0) return;
   if (n == 1 || lam == 0) {
-    for (int i = 0; i < n; i++)
-      beta[i] = y[i];
+    for (int i = 0; i < n; i++) beta[i] = y[i];
     return;
   }
 
@@ -55,8 +53,7 @@ void tf_dp(int n, double *y, double lam, double *beta) {
     alo = afirst;
     blo = bfirst;
     for (lo = l; lo <= r; lo++) {
-      if (alo * x[lo] + blo > -lam)
-        break;
+      if (alo * x[lo] + blo > -lam) break;
       alo += a[lo];
       blo += b[lo];
     }
@@ -71,8 +68,7 @@ void tf_dp(int n, double *y, double lam, double *beta) {
     ahi = alast;
     bhi = blast;
     for (hi = r; hi >= l; hi--) {
-      if (-ahi * x[hi] - bhi < lam)
-        break;
+      if (-ahi * x[hi] - bhi < lam) break;
       ahi += a[hi];
       bhi += b[hi];
     }
@@ -99,8 +95,7 @@ void tf_dp(int n, double *y, double lam, double *beta) {
   alo = afirst;
   blo = bfirst;
   for (lo = l; lo <= r; lo++) {
-    if (alo * x[lo] + blo > 0)
-      break;
+    if (alo * x[lo] + blo > 0) break;
     alo += a[lo];
     blo += b[lo];
   }
