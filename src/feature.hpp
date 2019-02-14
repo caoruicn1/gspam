@@ -1,6 +1,5 @@
 #ifndef LIB_FEAT
 #define LIB_FEAT
-#include <armadillo>
 #include <iostream>
 #include "RcppArmadillo.h"
 #include "prox_utils.hpp"

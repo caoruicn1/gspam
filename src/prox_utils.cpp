@@ -37,37 +37,39 @@ double quadloss(vec y, vec theta) {
   return (temp * temp);
 };
 
-/// #######
-
-double logloss(vec y, vec theta) {
+double log_loss(vec y, vec theta) {
   vec t = exp(theta);
   vec t1 = t / (1 + t);
   double temp = dot(y, t1);
   return temp + dot((1 - y), (1 / (1 + exp(theta))));
 };
 
-/// NEW GRADIENTS GO HERE
+/// NEW GRADIENTS GO HERE (and in header)
 
-vec quadgrad(vec y, vec theta) { return 2 * (theta - y); };
+vec quad_grad(vec y, vec theta) { return 2 * (theta - y); };
 
-vec loggrad(vec y, vec theta) { return y - (exp(theta) / (1 + exp(theta))); };
+vec log_grad(vec y, vec theta) { return y - (exp(theta) / (1 + exp(theta))); };
 
 ///########
 
-/// PUT TYPE IN IF STATEMENT HERE IN BOTH
+/// PUT TYPE IN IF STATEMENT HERE IN BOTH LOSS AND GRAD FUNCTIONS
 
 double loss(vec y, vec theta, std::string type) {
   if (type == "quad") {
-    return quadloss(y, theta);
+    return quad_loss(y, theta);
   } else if (type == "log") {
-    return logloss(y, theta);
+    return log_loss(y, theta);
+  } else{
+    throw std::invalid_argument( "Bad loss type" );
   }
 };
 
 vec grad(vec y, vec theta, std::string type) {
   if (type == "quad") {
-    return quadgrad(y, theta);
+    return quad_grad(y, theta);
   } else if (type == "log") {
-    return loggrad(y, theta);
+    return log_grad(y, theta);
+  } else{
+    throw std::invalid_argument( "Bad loss type" );
   }
 };

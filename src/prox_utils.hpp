@@ -14,13 +14,13 @@ using namespace arma;
 vec soft_scale(vec x, double lambda);
 
 
-double quadloss(vec y, vec theta);
+double quad_loss(vec y, vec theta);
 
-double logloss(vec y, vec theta);
+double log_loss(vec y, vec theta);
 
-vec quadgrad(vec y, vec theta);
+vec quad_grad(vec y, vec theta);
 
-vec loggrad(vec y, vec theta);
+vec log_grad(vec y, vec theta);
 
 double loss(vec y, vec theta, std::string type);
 
