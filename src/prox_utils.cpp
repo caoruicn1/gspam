@@ -32,29 +32,38 @@ vec soft_scale(vec x, double lambda) {
 
 /// NEW LOSSES GO HERE
 
-double quadloss(vec y, vec theta) {
+double quad_loss(vec y, vec theta) {
   double temp = norm(y - theta, 2);
   return (temp * temp);
 };
 
 double log_loss(vec y, vec theta) {
   vec t = exp(theta);
-  vec t1 = t / (1 + t);
-  double temp = dot(y, t1);
-  return temp + dot((1 - y), (1 / (1 + exp(theta))));
+  vec t1 = log(t / (1 + t));
+  double temp = -1*dot(y, t1);
+  return temp - dot((1 - y), log(1 / (1 + exp(theta))));
 };
 
 /// NEW GRADIENTS GO HERE (and in header)
 
 vec quad_grad(vec y, vec theta) { return 2 * (theta - y); };
 
-vec log_grad(vec y, vec theta) { return y - (exp(theta) / (1 + exp(theta))); };
+vec log_grad(vec y, vec theta) { return (exp(theta) / (1 + exp(theta)))-y; };
 
 ///########
 
 /// PUT TYPE IN IF STATEMENT HERE IN BOTH LOSS AND GRAD FUNCTIONS
 
-double loss(vec y, vec theta, std::string type) {
+// Loss
+//' @title Generalized Loss function
+//' @description Applies specified loss to two vectors
+//' @name gspam_c
+//' @param y target of loss
+//' @param theta fitted values
+//' @param type type of loss to use
+//' @export
+// [[Rcpp::export(name="loss")]]
+double loss(arma::vec y, arma::vec theta, std::string type) {
   if (type == "quad") {
     return quad_loss(y, theta);
   } else if (type == "log") {
@@ -64,7 +73,16 @@ double loss(vec y, vec theta, std::string type) {
   }
 };
 
-vec grad(vec y, vec theta, std::string type) {
+// Loss
+//' @title Generalized Loss Grad Function
+//' @description Applies specified grad of loss to two vectors
+//' @name gspam_c
+//' @param y target of loss
+//' @param theta fitted values
+//' @param type type of loss to use
+//' @export
+// [[Rcpp::export(name="grad")]]
+arma::vec grad(arma::vec y, arma::vec theta, std::string type) {
   if (type == "quad") {
     return quad_grad(y, theta);
   } else if (type == "log") {

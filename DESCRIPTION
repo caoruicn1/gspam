@@ -2,12 +2,18 @@ Package: gspam
 Type: Package
 Title: Generalized Sparse Additive Models with Variational Penalty
 Version: 0.1.0
-Date: 2018-12-13
+Date: 2019-02-14
 Author: Thayer Fisher
 Maintainer: Thayer Fisher <thayerf@uw.edu>
-Description: (STUFF HERE)
+Description: This package fits generalized sparse additive models for a variety of variational penalties and losses.
 License: GPL-2
 Imports: Rcpp (>= 0.12.16)
 LinkingTo: Rcpp, RcppArmadillo
 RoxygenNote: 6.1.1
-Suggests: testthat
+Suggests: 
+    testthat,
+    knitr,
+    rmarkdown
+References:
+Examples:
+VignetteBuilder: knitr

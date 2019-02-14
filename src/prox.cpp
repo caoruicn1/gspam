@@ -59,7 +59,7 @@ vec fl_prox(feature *fused, residual *y, double lambda1, double lambda2,
   fused_fit = soft_scale(fused_fit, lambda1 * t * sqrt(fused->fitted->n_rows));
   return fused_fit;
 };
-///@brief Solve the proximal problem with no variational penalty.
+///@brief Solve the proximal problem with no variational penalty (basis Q).
 ///@param[in] fused
 /// Pointer to feature object
 ///@param[in] y
@@ -71,7 +71,7 @@ vec fl_prox(feature *fused, residual *y, double lambda1, double lambda2,
 vec std_prox(feature *fused, residual *y, double lambda1, double t) {
   vec jresid = *fused->fitted - *y->resid * t;  // y->resid->n_rows;
   jresid = (fused->Q * fused->Q.t()) * jresid;
-  jresid = soft_scale(jresid, lambda1 * t * sqrt(fused->fitted->size()));
+  jresid = soft_scale(jresid, lambda1 * t * sqrt(fused->fitted->n_rows));
   return jresid;
 };
 
@@ -86,7 +86,7 @@ vec std_prox(feature *fused, residual *y, double lambda1, double t) {
 ///@param[in] t
 /// Step size
 vec cat_prox(feature *fused, residual *y, double lambda1, double t) {
-  vec jresid = *fused->fitted + *y->resid * t / y->resid->n_rows;
+  vec jresid = *fused->fitted - *y->resid * t;
   vec *fitted = new vec(fused->fitted->n_rows);
   for (int i = 0; i < fused->fitted->n_rows; i++) {
     fused->buffer->at(fused->x->at(i)) =
@@ -99,7 +99,7 @@ vec cat_prox(feature *fused, residual *y, double lambda1, double t) {
     fitted->at(i) = fused->buffer->at(fused->x->at(i));
   };
   fused->buffer->fill(0);
-  *fitted = soft_scale(*fitted, lambda1 * t * sqrt(fused->fitted->size()));
+  *fitted = soft_scale(*fitted, lambda1 * t * sqrt(fused->fitted->n_rows));
   return *fitted;
 };
 

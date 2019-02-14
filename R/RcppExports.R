@@ -78,3 +78,25 @@ interpolate_vec <- function(x, fitted, sort_point) {
     .Call('_gspam_interpolate_vec', PACKAGE = 'gspam', x, fitted, sort_point)
 }
 
+#' @title Generalized Loss function
+#' @description Applies specified loss to two vectors
+#' @name gspam_c
+#' @param y target of loss
+#' @param theta fitted values
+#' @param type type of loss to use
+#' @export
+loss <- function(y, theta, type) {
+    .Call('_gspam_loss', PACKAGE = 'gspam', y, theta, type)
+}
+
+#' @title Generalized Loss Grad Function
+#' @description Applies specified grad of loss to two vectors
+#' @name gspam_c
+#' @param y target of loss
+#' @param theta fitted values
+#' @param type type of loss to use
+#' @export
+grad <- function(y, theta, type) {
+    .Call('_gspam_grad', PACKAGE = 'gspam', y, theta, type)
+}
+

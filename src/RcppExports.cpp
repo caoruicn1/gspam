@@ -94,6 +94,32 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// loss
+double loss(arma::vec y, arma::vec theta, std::string type);
+RcppExport SEXP _gspam_loss(SEXP ySEXP, SEXP thetaSEXP, SEXP typeSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::vec >::type y(ySEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type theta(thetaSEXP);
+    Rcpp::traits::input_parameter< std::string >::type type(typeSEXP);
+    rcpp_result_gen = Rcpp::wrap(loss(y, theta, type));
+    return rcpp_result_gen;
+END_RCPP
+}
+// grad
+arma::vec grad(arma::vec y, arma::vec theta, std::string type);
+RcppExport SEXP _gspam_grad(SEXP ySEXP, SEXP thetaSEXP, SEXP typeSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::vec >::type y(ySEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type theta(thetaSEXP);
+    Rcpp::traits::input_parameter< std::string >::type type(typeSEXP);
+    rcpp_result_gen = Rcpp::wrap(grad(y, theta, type));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_gspam_gspam_c", (DL_FUNC) &_gspam_gspam_c, 6},
@@ -102,6 +128,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gspam_gspam_full", (DL_FUNC) &_gspam_gspam_full, 5},
     {"_gspam_get_lambdas", (DL_FUNC) &_gspam_get_lambdas, 5},
     {"_gspam_interpolate_vec", (DL_FUNC) &_gspam_interpolate_vec, 3},
+    {"_gspam_loss", (DL_FUNC) &_gspam_loss, 3},
+    {"_gspam_grad", (DL_FUNC) &_gspam_grad, 3},
     {NULL, NULL, 0}
 };
 

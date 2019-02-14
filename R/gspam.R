@@ -1,31 +1,3 @@
-#' # Categorical Variables Prox Solver
-#' #' @title Categorical Variable Prox Solver
-#' #' @description Build and fit a sparsity penalized categorical variable
-#' #' @name gspam_cat
-#' #' @param data covariate list of strings (or matrix of strings)
-#' #' @param y response variable numeric values
-#' #' @param lambda sparsity penalty
-#' #' @export
-#' gspam_cat<-function(data=data,y=y,lambda=lambda){
-#'   if(is.matrix(data)){
-#'     numdata<-matrix(nrow=nrow(data),ncol=ncol(data))
-#'     countdata<-c()
-#'     for(i in 1:ncol(data)){
-#'       cat_obj<-gspam_cat_build(data[,i])
-#'       numdata[,i]=cat_obj$numdata
-#'       countdata=coundata+cat_obj$cats$freq
-#'     }
-#'
-#'     fitted<-gspam_cat_solver(numdata,y,countdata,"cat",lambda)
-#'   }
-#'   else if(is.vector(data)){
-#'     cat_obj<-gspam_cat_build(data)
-#'     fitted<-gspam_cat_solver(matrix(cat_obj$numdata,ncol=1),y,matrix(cat_obj$cats$Freq,ncol=1),"cat",lambda)
-#'   }
-#'   else{stop("Bad data type for cat (use matrix or vector)")}
-#'   return(fitted)
-#' }
-
 # Categorical Variable Builder
 #' @title Categorical Variable Prox builder
 #' @description Build a categorical variable
@@ -36,11 +8,10 @@ gspam_cat_build<-function(data=data){
   cats<-as.data.frame(table(data))
   nums<-c(0:(nrow(cats)-1))
   numdata<-match(data,cats$data)-1
-  newlist<-list("freq"=cats$Freq,"numdata"=numdata)
+  newlist<-list("numdata"=numdata,"freq"=cats$Freq)
   return( newlist)
 }
 
-# Categorical Variable Builder
 #' @title Predict Function
 #' @description Build a categorical variable
 #' @name predict
@@ -50,42 +21,6 @@ predict<-function(data=data,new_point){
   fitted_point<-interpolate(data$data,data$fitted,new_point)
   return(fitted_point)
 }
-
-
-#' # Generalized Sparse Additive Model Solver
-#' #' @title GSpam solver
-#' #' @description Wrapper for Vspam solvers, can solve on matrix or data frame for single or path of lambdas.
-#' #' @name GSpam
-#' #' @param data covariate matrix/data frame
-#' #' @param y response vector
-#' #' @param prox_type vector of prox types to use
-#' #' @param lambda1 lambda value(s)
-#' #' @param lambda2 lambda value(s)
-#' #'
-#' #' @export
-#' gspam<-function(data,y,prox_type,lambda1,lambda2){
-#' data_c<-matrix(nrow=nrow(data),ncol=ncol(data))
-#'     for(i in 1:ncol(data)){
-#'       if(prox_type[i]!="cat"){
-#'       data_c[,i]=data[,i]
-#'     }
-#'     else{
-#'       temp<-gspam_cat_build(data[i])
-#'       data_c[,i]=temp$numdata
-#'     }
-#'     }
-#'   if(length(lambda1)!=length(lambda2)){
-#'     error("lambda vectors must have same length")
-#'   }
-#'   if(length(lambda1)>1){
-#'     fit<-gspam_c_vec(data_c,y,prox_type,lambda1,lambda2)
-#'   }
-#'  else{
-#'    fit<-gspam_c(data_c,y,prox_type,lambda1,lambda2)
-#'  }
-#'
-#'   return(fit)
-#' }
 
 
 # Generalized Sparse Additive Model Solver

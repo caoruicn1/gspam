@@ -102,47 +102,18 @@ struct feature {
       throw "Bad prox type: " + type;
     };
   };
-  /// TODO: Allow for matrix constructor on fused lasso?
-  feature(std::string type, mat *covariates) {
-    prox_type = type;
-    if (type == "proj") {
-      basis = new mat(covariates->n_rows, covariates->n_cols);
-      *basis = *covariates;
-      x = new vec(basis->n_rows);
-      *x = covariates->col(1);
-      fitted = new vec(basis->n_rows);
-      fitted->fill(0);
-      buffer = new vec(basis->n_rows);
-      buffer->fill(0);
-      qr_econ(Q, R, *basis);
-      prox_type = "proj";
-      ord = sort_index(*x);
-    } else {
-      throw "Bad prox type for data";
-    };
-  };
-  feature(std::string type, vec *covariates, vec *counts) {
-    prox_type = type;
-    if (type == "cat") {
-      x = new vec(covariates->n_rows);
-      *x = *covariates;
-      fitted = new vec(covariates->n_rows);
-      fitted->fill(0);
-      count = new vec(counts->n_rows);
-      *count = *counts;
-      buffer = new vec(counts->n_rows);
-      buffer->fill(0);
-    } else {
-      throw "Bad prox type for data";
-    }
-  }
-  // TODO: ADD OTHER LINK FUNCTIONS FOR INITIALIZATION
+  // TODO: FIGURE OUT BETTER WAY TO APPLY LINK FUNCTIONS
   feature(std::string type, residual *y) {
     prox_type = type;
     std::string loss = y->loss_type;
     if (type == "intercept") {
       fitted = new vec(y->y_->n_rows);
-      double fitted_val = mean(*y->y_);
+      double fitted_val=0;
+      if(loss == "log"){
+      fitted_val = log(mean(*y->y_)/mean(1-*y->y_));
+      }else{
+      fitted_val = mean(*y->y_);
+      }
       fitted->fill(fitted_val);
     } else {
       throw "Bad prox type: " + type;

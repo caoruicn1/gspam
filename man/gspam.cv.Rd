@@ -22,39 +22,3 @@ gspam.cv(data, y, prox_type, loss_type, alpha = 0.5, k = 10)
 \description{
 Splits data into train and test sets, tests over lambda path for entire data.
 }
-\details{
-# Generalized Sparse Additive Model Solver
-#' @title GSpam solver
-#' @description Wrapper for Vspam solvers, can solve on matrix or data frame for single or path of lambdas.
-#' @name GSpam
-#' @param data covariate matrix/data frame
-#' @param y response vector
-#' @param prox_type vector of prox types to use
-#' @param lambda1 lambda value(s)
-#' @param lambda2 lambda value(s)
-#'
-#' @export
-gspam<-function(data,y,prox_type,lambda1,lambda2){
-data_c<-matrix(nrow=nrow(data),ncol=ncol(data))
-    for(i in 1:ncol(data)){
-      if(prox_type[i]!="cat"){
-      data_c[,i]=data[,i]
-    }
-    else{
-      temp<-gspam_cat_build(data[i])
-      data_c[,i]=temp$numdata
-    }
-    }
-  if(length(lambda1)!=length(lambda2)){
-    error("lambda vectors must have same length")
-  }
-  if(length(lambda1)>1){
-    fit<-gspam_c_vec(data_c,y,prox_type,lambda1,lambda2)
-  }
- else{
-   fit<-gspam_c(data_c,y,prox_type,lambda1,lambda2)
- }
-
-return(fit)
-}
-}
