@@ -17,7 +17,7 @@ test_that("cv valgrind", {
   y <- rnorm(n)+sig %*% beta
   prox_type <- rep("fl",p)
   start.time <- Sys.time()
-  results <- gspam_full(X,y,prox_type,"quad",0.5)
+  results <- gspam.cv(X,y,prox_type,"quad",0.5)
   end.time <- Sys.time()
   end.time-start.time
 })
