@@ -134,10 +134,13 @@ gspam.cv <- function(data,y,prox_type,loss_type,alpha=0.5,k=10){
     for(i in 1:100){
       mse[i] <- mean((testy-test_fits[[i]])^2)
     }
+   print(mse)
    mselist[,k] <- mse
   }
-  best_lambda1 <- lambda1[which.min(mselist)]
-  return(list("mses" = rowMeans(mselist),"lambda1"=lambda1,"best_lambda1" = best_lambda1))
+  best_lambda1 <- lambda1[which.min(rowMeans(mselist))]
+  lower <- rowQuantiles(mselist,.05)
+  upper <- rowQuantiles(mselist,.95)
+  return(list("mses" = rowMeans(mselist),"lambda1"=lambda1,"best_lambda1" = best_lambda1,lowermse = lower, uppermse= upper, full = mselist))
 }
 
 

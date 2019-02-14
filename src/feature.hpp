@@ -1,6 +1,5 @@
 #ifndef LIB_FEAT
 #define LIB_FEAT
-#include <armadillo>
 #include <iostream>
 #include "RcppArmadillo.h"
 #include "prox_utils.hpp"
@@ -155,4 +154,5 @@ struct feature {
 void sort_by(vec *orig, vec *buffer, uvec ord);
 
 void unsort_by(vec *orig, vec *buffer, uvec ord);
+
 #endif /* FEAT_H */

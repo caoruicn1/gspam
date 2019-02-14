@@ -2,7 +2,6 @@
 % Please edit documentation in R/RcppExports.R
 \name{interpolate}
 \alias{interpolate}
-\alias{interpolate}
 \alias{interpolate_vec}
 \title{Interpolates a new value based on fitted value}
 \usage{

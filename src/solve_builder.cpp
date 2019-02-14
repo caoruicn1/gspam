@@ -34,7 +34,6 @@ arma::mat single_solver(std::vector<feature *> features, residual *y,
       }
     }
   } while (!approx_equal(*ever_active, ever_active_old, "absdiff", 0.002));
-  cout << "converged in " << i << " steps." << endl;
   arma::mat fitted = mat(y->resid->n_rows, features.size(), fill::zeros);
   for (int i = 0; i < features.size(); i++) {
     fitted.col(i) = *features.at(i)->fitted;
@@ -51,7 +50,6 @@ field<arma::mat> path_solver(std::vector<feature *> features, residual *y,
     for (int i = lambda1.n_rows - 1; i >= 0; i--) {
       fitted(i) =
           single_solver(features, y, lambda1.at(i), lambda2.at(i), ever_active);
-      cout << *ever_active << endl;
     }
   } else
     throw "Lambda Vectors are of invalid length (must match each other)";

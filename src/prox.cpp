@@ -11,6 +11,7 @@
 #include <iostream>
 #include "prox.hpp"
 #include "ryansdp.hpp"
+#include "feature.hpp"
 using namespace arma;
 ///@brief Update the residuals for a residual object, given a vector of features
 ///@param[in] features
@@ -55,9 +56,7 @@ vec fl_prox(feature *fused, residual *y, double lambda1, double lambda2,
   unsort_by(y->resid, fused->buffer, fused->ord);
   unsort_by(&fused_fit, fused->buffer, fused->ord);
   unsort_by(fused->fitted, fused->buffer, fused->ord);
-  /// cout << fused_fit<<endl;
   fused_fit = soft_scale(fused_fit, lambda1 * t * sqrt(fused->fitted->n_rows));
-  /// cout << fused_fit<<endl;
   return fused_fit;
 };
 ///@brief Solve the proximal problem with no variational penalty.

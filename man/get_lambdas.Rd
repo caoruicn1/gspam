@@ -15,3 +15,6 @@ get_lambdas(data, y, prox_type, loss_type, alpha)
 
 \item{scalar}{value lambda2=alpha*lambda1}
 }
+\description{
+Lambda path retrieval for given data and outcome
+}
