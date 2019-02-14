@@ -34,6 +34,7 @@ arma::mat single_solver(std::vector<feature *> features, residual *y,
       }
     }
   } while (!approx_equal(*ever_active, ever_active_old, "absdiff", 0.002));
+
   arma::mat fitted = mat(y->resid->n_rows, features.size(), fill::zeros);
   for (int i = 0; i < features.size(); i++) {
     fitted.col(i) = *features.at(i)->fitted;
