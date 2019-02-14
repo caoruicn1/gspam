@@ -40,7 +40,7 @@ double quad_loss(vec y, vec theta) {
 double log_loss(vec y, vec theta) {
   vec t = exp(theta);
   vec t1 = log(t / (1 + t));
-  double temp = -1*dot(y, t1);
+  double temp = -1 * dot(y, t1);
   return temp - dot((1 - y), log(1 / (1 + exp(theta))));
 };
 
@@ -48,7 +48,7 @@ double log_loss(vec y, vec theta) {
 
 vec quad_grad(vec y, vec theta) { return 2 * (theta - y); };
 
-vec log_grad(vec y, vec theta) { return (exp(theta) / (1 + exp(theta)))-y; };
+vec log_grad(vec y, vec theta) { return (exp(theta) / (1 + exp(theta))) - y; };
 
 ///########
 
@@ -68,8 +68,8 @@ double loss(arma::vec y, arma::vec theta, std::string type) {
     return quad_loss(y, theta);
   } else if (type == "log") {
     return log_loss(y, theta);
-  } else{
-    throw std::invalid_argument( "Bad loss type" );
+  } else {
+    throw std::invalid_argument("Bad loss type");
   }
 };
 
@@ -87,7 +87,7 @@ arma::vec grad(arma::vec y, arma::vec theta, std::string type) {
     return quad_grad(y, theta);
   } else if (type == "log") {
     return log_grad(y, theta);
-  } else{
-    throw std::invalid_argument( "Bad loss type" );
+  } else {
+    throw std::invalid_argument("Bad loss type");
   }
 };

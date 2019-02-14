@@ -108,11 +108,11 @@ struct feature {
     std::string loss = y->loss_type;
     if (type == "intercept") {
       fitted = new vec(y->y_->n_rows);
-      double fitted_val=0;
-      if(loss == "log"){
-      fitted_val = log(mean(*y->y_)/mean(1-*y->y_));
-      }else{
-      fitted_val = mean(*y->y_);
+      double fitted_val = 0;
+      if (loss == "log") {
+        fitted_val = log(mean(*y->y_) / mean(1 - *y->y_));
+      } else {
+        fitted_val = mean(*y->y_);
       }
       fitted->fill(fitted_val);
     } else {

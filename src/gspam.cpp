@@ -61,9 +61,6 @@ Rcpp::List gspam_c_vec(arma::mat data, arma::vec y,
 };
 
 
-
-
-
 // Generalized Sparse Additive Model Solver for vector of values
 //' @title Default Generalized Sparse Additive Model Solver with vector of
 //' prespecified variational penalties and sparsity penalties
@@ -77,15 +74,16 @@ Rcpp::List gspam_c_vec(arma::mat data, arma::vec y,
 //' @param variational penalties
 // [[Rcpp::export(name="gspam_c_print")]]
 void gspam_c_print(arma::mat data, arma::vec y,
-                       std::vector<std::string> prox_type,
-                       std::string loss_type, arma::vec lambda1,
-                       arma::vec lambda2) {
+                   std::vector<std::string> prox_type, std::string loss_type,
+                   arma::vec lambda1, arma::vec lambda2) {
   if (lambda1.n_rows != lambda2.n_rows) {
     throw "Variational and sparsity vectors must be of same size.";
   }
   arma::field<mat> gsp_fitted =
-    gspam_path_solver(data, y, prox_type, loss_type, lambda1, lambda2);
-  cout<< gspam_solver(data,y,prox_type,loss_type,lambda1.at(50),lambda2.at(50))<<endl;
+      gspam_path_solver(data, y, prox_type, loss_type, lambda1, lambda2);
+  cout << gspam_solver(data, y, prox_type, loss_type, lambda1.at(50),
+                       lambda2.at(50))
+       << endl;
 };
 
 

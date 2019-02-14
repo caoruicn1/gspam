@@ -124,5 +124,3 @@ arma::vec lambda_path(std::vector<feature *> features, residual *y,
   lambda_vec = exp(linspace<vec>(log(.01 * u), log(u), 100));
   return lambda_vec;
 };
-
-
