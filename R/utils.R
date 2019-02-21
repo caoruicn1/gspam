@@ -5,8 +5,8 @@
 #' #' @name expit
 #' #' @param vector or scalar to use
 #' #' @export
-expit <- function(x){
-  return(exp(x)/(1+exp(x)))
+expit <- function(x) {
+  return(exp(x) / (1 + exp(x)))
 }
 
 #' #' @title logit
@@ -14,6 +14,6 @@ expit <- function(x){
 #' #' @name logit
 #' #' @param vector or scalar to use
 #' #' @export
-logit <- function(x){
-  return(log(x/(1-x)))
+logit <- function(x) {
+  return(log(x / (1 - x)))
 }
