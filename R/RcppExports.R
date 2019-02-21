@@ -11,7 +11,6 @@
 #' @param type of prox to use
 #' @param sparsity penalty
 #' @param variational penalty
-#' @export
 gspam_c <- function(data, y, prox_type, loss_type, lambda1 = 0.0, lambda2 = 0.0) {
     .Call('_gspam_gspam_c', PACKAGE = 'gspam', data, y, prox_type, loss_type, lambda1, lambda2)
 }
@@ -26,22 +25,33 @@ gspam_c <- function(data, y, prox_type, loss_type, lambda1 = 0.0, lambda2 = 0.0)
 #' @param type of prox to use
 #' @param sparsity penalties
 #' @param variational penalties
-#' @export
 gspam_c_vec <- function(data, y, prox_type, loss_type, lambda1, lambda2) {
     .Call('_gspam_gspam_c_vec', PACKAGE = 'gspam', data, y, prox_type, loss_type, lambda1, lambda2)
 }
 
-#' @title Interpolates a new value based on fitted value
-#' @description Allows user to specify new point to predict on
-#' @name interpolate
-#' @param x covariate matrix
-#' @param fitted matrix of fitted values
-#' @param sort_point vector of new covariates to fit
-#' @export
-interpolate <- function(x, fitted, sort_point) {
-    .Call('_gspam_interpolate', PACKAGE = 'gspam', x, fitted, sort_point)
+#' @title Default Generalized Sparse Additive Model Solver with vector of
+#' prespecified variational penalties and sparsity penalties
+#' @description Fit model as specified by user for a single variational penalty
+#' (matrix of X-values).
+#' @name gspam_c_vec
+#' @param data n by p matrix of inputs
+#' @param y response column vector
+#' @param type of prox to use
+#' @param sparsity penalties
+#' @param variational penalties
+gspam_c_print <- function(data, y, prox_type, loss_type, lambda1, lambda2) {
+    invisible(.Call('_gspam_gspam_c_print', PACKAGE = 'gspam', data, y, prox_type, loss_type, lambda1, lambda2))
 }
 
+#' @title Default Generalized Sparse Additive Model Solver that calculates
+#' lambda path based on mixture value.
+#' @description Fit model as specified by user for calculated range of lambda
+#' values.
+#' @name gspam_full
+#' @param data n by p matrix of inputs
+#' @param y response column vector
+#' @param type of prox to use
+#' @param scalar value lambda2=alpha*lambda1
 gspam_full <- function(data, y, prox_type, loss_type, alpha) {
     .Call('_gspam_gspam_full', PACKAGE = 'gspam', data, y, prox_type, loss_type, alpha)
 }
@@ -52,20 +62,8 @@ gspam_full <- function(data, y, prox_type, loss_type, alpha) {
 #' @param y response column vector
 #' @param type of prox to use
 #' @param scalar value lambda2=alpha*lambda1
-#' @export
 get_lambdas <- function(data, y, prox_type, loss_type, alpha) {
     .Call('_gspam_get_lambdas', PACKAGE = 'gspam', data, y, prox_type, loss_type, alpha)
-}
-
-#' @title Interpolates a new value based on fitted value
-#' @description Allows user to specify new point to predict on
-#' @name interpolate
-#' @param x covariate matrix
-#' @param fitted matrix of fitted values
-#' @param sort_point vector of new covariates to fit
-#' @export
-interpolate_vec <- function(x, fitted, sort_point) {
-    .Call('_gspam_interpolate_vec', PACKAGE = 'gspam', x, fitted, sort_point)
 }
 
 #' @title Generalized Loss function

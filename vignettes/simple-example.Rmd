@@ -30,7 +30,7 @@ We solve these problems by proximal gradient descent. Currently, the package sup
 
 ## Dataset
 
-This package includes a sample data set. It has 101 features and 100 observations. 100 of these features are normally distributed, and therefore continuous. One of them is categorical with 3 categories: "yes", "no", and "maybe". Binary and real-valued outcomes are generated based on this data. The true mean model is:
+This package includes a sample data set. It has 101 features and 1000 observations. 100 of these features are normally distributed, and therefore continuous. One of them is categorical with 3 categories: "yes", "no", and "maybe". Binary and real-valued outcomes are generated based on this data. The true mean model is:
 
 \begin{aligned}
 f(X_i)&= \mathbb{1}(x_c = \text{no})-\mathbb{1}(x_{c}=\text{yes})+\sum_{j=1}^{5}\left(\mathbb{1}(x_{ij}>0)-\mathbb{1}(x_{ij}<0)\right).
@@ -41,11 +41,13 @@ For the real-valued case,
 $$E(y_i| X_i) = f(X_i)+\epsilon_i.$$
 Where $\epsilon_i\stackrel{iid}{\sim} N(0,1)$.
 
-The above case is a somewhat ideal scenario for this package. $n=p$, so the data are fairly high-dimensional, and the mean model is non-linear and sparse, but still with a recoverable signal.
+The above case is a somewhat ideal scenario for this package. $n>p$, so the data are not really high-dimensional, and the mean model is non-linear and sparse, but still with a recoverable signal. This dataset will be used for illustrative purposes for these reasons.
 
 
 
 ## Examples
+
+# A singlular fit
 
 Using this package is very simple
 ```{r}
@@ -62,10 +64,35 @@ y <- example_data[,104]
 df <- example_data[,c(-102,-103,-104)]
 ```
 
-Now we can call gspam directly:
+Now we can call gspam directly using the fused lasso prox, and visualize how the number of active features increases as the sparsity penalty decreases. 
 
-```{r}
+```{r fig.width=6,fig.height=6}
 y <- example_data[,104]
 df <- example_data[,c(-102,-103,-104)]
-results <- gspam
+results <- gspam(df,y,'fl','quad')
+plot(results)
 ```
+
+
+Encouragingly, we see a plateau at 6 active features, which is the true number of signal features, suggesting that it is "difficult" for the noise features to enter the model. We can verify this by the following:
+
+```{r}
+print(head(results$fitted[[20]][,c(1:6,102)]))
+```
+
+
+This helps to verify that we are only fitting the true signal features in this lambda range.
+
+# Cross-validation
+
+The other major function in this package is gspam.cv . It too has a corresponding plot() function. The setup for crossvalidation is similar, with the default number of folds being 10. We will utilize the binary data for this example.
+
+```{r fig.width=6,fig.height=6}
+y <- example_data[,103]
+df <- example_data[,c(-102,-103,-104)]
+results <- gspam.cv(df,y,'fl','log')
+plot(results)
+```
+
+
+The results here are less promising, owing to the reduced information from binary data. There is increased variability in our estimate as lambda decreases, likely owing to the fact that we are mostly fitting noise in a large range of values. This example is illustrative of the fact that we will have many problems with binary data in the high-dimensional setting.

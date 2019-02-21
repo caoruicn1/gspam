@@ -14,52 +14,21 @@ vec fl_prox(feature *fused, residual *y, double lambda1, double lambda2,
             double t);
 vec std_prox(feature *fused, residual *y, double lambda1, double t);
 
-double fit_step(std::vector<feature *> features, residual *resid,
-                double lambda1, double lambda2, double t, vec to_fit);
-
-double interpolate(feature *x_sort, double sort_point);
-
-double predict(std::vector<feature *> features, vec new_x);
-
 vec cat_prox(feature *fused, residual *y, double lambda1, double t);
 
-double interpolate_vec(vec x, vec fitted, double sort_point);
+vec intercept_prox(feature *x, residual *y, double t);
 
-
-bool linesearch(feature *x, residual *y, double lambda1, double lambda2,
-                double t);
-
+vec fit(feature *x, residual *y, double lambda1, double lambda2, double t);
 
 mat new_fit(std::vector<feature *> features, residual *y, double lambda1,
             double lambda2, double t, vec to_fit);
 
 mat get_fit_mat(std::vector<feature *> features);
 
-bool l2_linesearch(residual *y, mat old_fit, mat new_fit, double t);
+bool linesearch(feature *x, residual *y, double lambda1, double lambda2,
+                double t);
 
-vec fit(feature *x, residual *y, double lambda1, double lambda2, double t);
-
-double interpolate(feature *x_sort, double sort_point);
-
-
-double predict(std::vector<feature *> features, vec new_x);
-
-double interpolate_vec(vec x, vec fitted, double sort_point);
-
-vec soft_scale(vec x, double lambda);
-
-
-double quadloss(vec y, vec theta);
-
-
-double logloss(vec y, vec theta);
-
-vec quadgrad(vec y, vec theta);
-
-vec loggrad(vec y, vec theta);
-
-double loss(vec y, vec theta, std::string type);
-
-vec grad(vec y, vec theta, std::string type);
+double fit_step(std::vector<feature *> features, residual *resid,
+                double lambda1, double lambda2, double t, vec to_fit);
 
 #endif /* PROX_H */

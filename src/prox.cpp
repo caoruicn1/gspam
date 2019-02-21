@@ -175,15 +175,18 @@ bool linesearch(residual *y, mat old_fit, mat new_fit, double t,
 /// Step size
 double fit_step(std::vector<feature *> features, residual *resid,
                 double lambda1, double lambda2, double t, vec to_fit) {
+  t = 1.0/features.size();
   mat old_fit = mat(resid->y_->n_rows, features.size());
   mat prox_fit = mat(resid->y_->n_rows, features.size());
   old_fit = get_fit_mat(features);
   prox_fit = new_fit(features, resid, lambda1, lambda2, t, to_fit);
-  while (linesearch(resid, old_fit, prox_fit, t, resid->loss_type)) {
+  
+ ///TODO: FIX STEP SIZE, IT IS UNSTABLE
+ /* while (linesearch(resid, old_fit, prox_fit, t, resid->loss_type)) {
     t *= .8;
     prox_fit = new_fit(features, resid, lambda1, lambda2, t, to_fit);
   }
-  // std::cout<<"RUNNING FIT w step stize : "<<t<<endl;
+  // std::cout<<"RUNNING FIT w step stize : "<<t<<endl;*/
   int n = resid->resid->n_rows;
   for (int i = 0; i < features.size(); i++) {
     *features.at(i)->fitted = prox_fit.col(i);
@@ -194,109 +197,3 @@ double fit_step(std::vector<feature *> features, residual *resid,
 };
 
 
-///@brief Interpolate a fitted value for a single feature
-///@param[in] feature
-/// Feature object on which to interpolate
-///@param[in] sort_point
-/// X value of new point
-///@return Fitted value estimate for new x value.
-double interpolate(feature *x_sort, double sort_point) {
-  int n = x_sort->x->n_rows;
-  sort_by(x_sort->x, x_sort->buffer, x_sort->ord);
-  sort_by(x_sort->fitted, x_sort->buffer, x_sort->ord);
-  int l = 0;
-  int u = n - 1;
-  /// TODO: Should I extrapolate?
-  if (sort_point < x_sort->x->at(l) || sort_point > x_sort->x->at(u))
-    throw "New point outside allowable range, cannot interpolate.";
-  while (u - l > 1) {
-    if (sort_point < x_sort->x->at(u / 2)) {
-      u = (l + u) / 2;
-    } else if (sort_point > x_sort->x->at(u / 2)) {
-      l = (l + u) / 2;
-    } else if (sort_point == x_sort->x->at(u / 2)) {
-      l = (l + u) / 2;
-      u = (l + u) / 2;
-    }
-  }
-  double fitted;
-  if (u != l) {
-    /// TODO: If there is a more compact way to do linear interpolation, do so.
-    fitted = ((sort_point - x_sort->x->at(l)) /
-              (x_sort->x->at(u) - x_sort->x->at(l))) *
-                 (x_sort->fitted->at(u) - x_sort->fitted->at(l)) +
-             x_sort->fitted->at(l);
-  } else if (u == l)
-    fitted = x_sort->fitted->at(l);
-  unsort_by(x_sort->x, x_sort->buffer, x_sort->ord);
-  unsort_by(x_sort->fitted, x_sort->buffer, x_sort->ord);
-  return fitted;
-};
-///@brief Predict a new fitted value for a vector of covariates
-///@param[in] features
-/// Vector of pointers to feature objects
-///@param[in] new_x
-/// Vector of new x values to fit
-///@return New fitted value for vector of x's
-double predict(std::vector<feature *> features, vec new_x) {
-  if (features.size() != new_x.n_rows)
-    throw "New X vector does not have p elements.";
-  vec temp = new_x;
-  for (int i = 0; i < features.size(); i++) {
-    temp.at(i) = interpolate(features.at(i), new_x.at(i));
-  };
-  double fitted = sum(temp);
-  return fitted;
-};
-
-
-// Interpolation for new point
-//' @title Interpolates a new value based on fitted value
-//' @description Allows user to specify new point to predict on
-//' @name interpolate
-//' @param x covariate matrix
-//' @param fitted matrix of fitted values
-//' @param sort_point vector of new covariates to fit
-//' @export
-// [[Rcpp::export(name="interpolate_vec")]]
-double interpolate_vec(arma::vec x, arma::vec fitted, double sort_point) {
-  int n = x.n_rows;
-  uvec ord = sort_index(x);
-  vec *temp_ord = new vec(x.n_rows);
-  sort_by(&x, temp_ord, ord);
-  sort_by(&fitted, temp_ord, ord);
-  int l = 0;
-  int u = n - 1;
-  if (sort_point < x.at(l)) {
-    double new_fitted = fitted.at(l);
-    unsort_by(&x, temp_ord, ord);
-    unsort_by(&fitted, temp_ord, ord);
-    return new_fitted;
-  } else if (sort_point > x.at(u)) {
-    double new_fitted = fitted.at(u);
-    unsort_by(&x, temp_ord, ord);
-    unsort_by(&fitted, temp_ord, ord);
-    return new_fitted;
-  }
-  while (u - l > 1) {
-    if (sort_point < x.at((l + u) / 2)) {
-      u = (l + u) / 2;
-    } else if (sort_point > x.at((l + u) / 2)) {
-      l = (l + u) / 2;
-    } else if (sort_point == x.at((l + u) / 2)) {
-      l = (l + u) / 2;
-      u = (l + u) / 2;
-    }
-  }
-  double new_fitted;
-  if (u != l) {
-    /// TODO: If there is a more compact way to do linear interpolation, do so.
-    new_fitted = ((sort_point - x.at(l)) / (x.at(u) - x.at(l))) *
-                     (fitted.at(u) - fitted.at(l)) +
-                 fitted.at(l);
-  } else if (u == l)
-    new_fitted = fitted.at(l);
-  unsort_by(&x, temp_ord, ord);
-  unsort_by(&fitted, temp_ord, ord);
-  return new_fitted;
-};

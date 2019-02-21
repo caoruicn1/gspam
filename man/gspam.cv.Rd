@@ -7,7 +7,7 @@
 \usage{
 gspam(x, y, prox_type, loss_type, alpha = 0.5)
 
-gspam.cv(data, y, prox_type, loss_type, alpha = 0.5, k = 10)
+gspam.cv(x, y, prox_type, loss_type, alpha = 0.5, k = 10)
 }
 \arguments{
 \item{x}{covariate matrix/data frame}
@@ -21,9 +21,9 @@ If the loss type is "log" then this is a vector of binary values.}
 
 \item{alpha}{mixture of lambdas (lambda2= alpha*lambda1)}
 
-\item{data}{covariate matrix/data frame}
-
 \item{k}{number of folds, default is 10}
+
+\item{data}{covariate matrix/data frame}
 
 \item{y}{response vector}
 

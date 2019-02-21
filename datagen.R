@@ -8,7 +8,7 @@ expit <- function(x){
 set.seed(1408)
 # Set Params
 # Number of obs
-n <- 100
+n <- 1000
 # Number of numeric features
 p <- 100
 # Number of numeric signal features

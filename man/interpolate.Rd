@@ -2,12 +2,9 @@
 % Please edit documentation in R/RcppExports.R
 \name{interpolate}
 \alias{interpolate}
-\alias{interpolate_vec}
 \title{Interpolates a new value based on fitted value}
 \usage{
 interpolate(x, fitted, sort_point)
-
-interpolate_vec(x, fitted, sort_point)
 }
 \arguments{
 \item{x}{covariate matrix}
@@ -15,15 +12,7 @@ interpolate_vec(x, fitted, sort_point)
 \item{fitted}{matrix of fitted values}
 
 \item{sort_point}{vector of new covariates to fit}
-
-\item{x}{covariate matrix}
-
-\item{fitted}{matrix of fitted values}
-
-\item{sort_point}{vector of new covariates to fit}
 }
 \description{
-Allows user to specify new point to predict on
-
 Allows user to specify new point to predict on
 }
