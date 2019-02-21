@@ -23,7 +23,7 @@ gspam <- function(x,y,prox_type,loss_type,alpha=0.5){
   for(i in 1:100){
    colnames(results$fitted[[i]])<- c('intercept', names(x))
   }
-  class(results) <- c(class(results),'gspam')
+  class(results) <- c('gspam')
   return(results)
 }
 
@@ -84,13 +84,16 @@ gspam.cv <- function(x,y,prox_type,loss_type,alpha=0.5,k=10){
     }
    mselist[,i] <- mse
   }
+  fitted <- gspam_full(data,y,prox_type,loss_type,alpha=0.5)
   best_lambda1 <- lambda1[which.min(rowMeans(mselist))]
+  best_fit <- fitted$fitted[[which(lambda1 == best_lambda1)]]
+  print(fitted$lambda1)
   sds <- apply(mselist,1,sd)/sqrt(k)
   lower <- rowMeans(mselist)-1.96*sds
   upper <- rowMeans(mselist)+1.96*sds
-  results <- list("errors" = rowMeans(mselist),"lambda1"=lambda1,"best_lambda1" = best_lambda1,
-                  lowermse = lower, uppermse= upper, full = mselist)
-  class(results)<- c(class(results), "gspam.cv")
+  results <- list('data'=data,"errors" = rowMeans(mselist),"lambda1"=lambda1,"best_lambda1" = best_lambda1,
+                  lowermse = lower, uppermse= upper, full = mselist, 'best_fit' = best_fit)
+  class(results)<- c("gspam.cv")
   return(results)
 }
 
@@ -114,12 +117,54 @@ prep_df <- function(df,prox_type){
 }
 
 #' @title Predict Function
-#' @description Build a categorical variable
+#' @description Predict new y values from a data frame or matrix of covariates with the same number of columns as the original
 #' @name predict
-#' @param data object returned by gspam for a single pair of lambda values
+#' @param data object of class gspam
+#' @param new_points feature matrix or data frame.
+#' @param p scalar for lambda position to use (1 is the lowest lambda pair on the path)
 #' @export
-predict<-function(data=data,new_point){
-# TODO: WRITE PREDICT FUNCTION
+predict.gspam<-function(data,new_points,p){
+  fitted <- matrix(rep(0,nrow(new_points)*ncol(new_points)),ncol = ncol(new_points))
+  old_fitted <- data$fitted[[p]]
+  old_x <- data$data
+  if(ncol(new_points)!= (ncol(old_x))){
+    throw("New x object does not have same number of columns as original fitted object.")
+  }
+  for(i in 1:ncol(old_x)){
+    if(class(new_points[,i]) %in% c("factor","character")){
+      fitted[,i]<- old_fitted[match(new_points[,i],old_x[,i]),(i+1)]
+    }
+    fitted[,i]<- approx(x=old_x[,i],y=old_fitted[,(i+1)],xout = new_points[,i],rule = 2)$y
+  }
+  predictions <- rowSums(fitted)+ old_fitted[1,1]
+  return(predictions)
+}
+
+#' @title Predict Function for cv object
+#' @description Predict new y values from a data frame or matrix of covariates with the same number of columns as the original.
+#'  Uses the fit with the lowest MSE from cv
+#' @name predict
+#' @param data object of class gspam.cv
+#' @param new_points feature matrix or data frame.
+#' @param p scalar for lambda position to use (1 is the lowest lambda pair on the path)
+#' @export
+predict.gspam.cv<-function(data,new_points){
+  fitted <- matrix(rep(0,nrow(new_points)*ncol(new_points)),ncol = ncol(new_points))
+  old_fitted <- data$best_fit
+  old_x <- data$data
+  if(ncol(new_points)!= (ncol(old_x))){
+    throw("New x object does not have same number of columns as original fitted object.")
+  }
+  for(i in 1:ncol(old_x)){
+    if(class(new_points[,i]) %in% c("factor","character")){
+      fitted[,i]<- old_fitted[match(new_points[,i],old_x[,i]),(i+1)]
+    }
+    approx(x=old_x[,i],y=old_fitted[,(i+1)],xout = new_points[,i])$y
+    fitted[,i]<- approx(x=old_x[,i],y=old_fitted[,(i+1)],xout = new_points[,i],rule = 2)$y
+  }
+  print(length(rowSums(fitted)))
+  predictions <- rowSums(fitted)+ old_fitted[1,1]
+  return(predictions)
 }
 
 #' @title Plot the sparsity vs. lambda for a fit of gspam

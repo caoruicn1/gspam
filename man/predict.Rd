@@ -2,13 +2,30 @@
 % Please edit documentation in R/gspam.R
 \name{predict}
 \alias{predict}
+\alias{predict.gspam}
+\alias{predict.gspam.cv}
 \title{Predict Function}
 \usage{
-predict(data = data, new_point)
+\method{predict}{gspam}(data, new_points, p)
+
+\method{predict}{gspam.cv}(data, new_points)
 }
 \arguments{
-\item{data}{object returned by gspam for a single pair of lambda values}
+\item{data}{object of class gspam}
+
+\item{new_points}{feature matrix or data frame.}
+
+\item{p}{scalar for lambda position to use (1 is the lowest lambda pair on the path)}
+
+\item{data}{object of class gspam.cv}
+
+\item{new_points}{feature matrix or data frame.}
+
+\item{p}{scalar for lambda position to use (1 is the lowest lambda pair on the path)}
 }
 \description{
-Build a categorical variable
+Predict new y values from a data frame or matrix of covariates with the same number of columns as the original
+
+Predict new y values from a data frame or matrix of covariates with the same number of columns as the original.
+ Uses the fit with the lowest MSE from cv
 }

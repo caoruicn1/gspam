@@ -18,7 +18,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-## Introduction
+# Introduction
 
 gspam is a collection of solvers aimed at solving the following problem:
 
@@ -28,7 +28,7 @@ This type of penalized nonparametric regression is ideal in situations where we 
 
 We solve these problems by proximal gradient descent. Currently, the package supports logistic and quadratic losses, and fused lasso, polynomial basis, and categorical variational penalties.
 
-## Dataset
+# Dataset
 
 This package includes a sample data set. It has 101 features and 1000 observations. 100 of these features are normally distributed, and therefore continuous. One of them is categorical with 3 categories: "yes", "no", and "maybe". Binary and real-valued outcomes are generated based on this data. The true mean model is:
 
@@ -45,9 +45,9 @@ The above case is a somewhat ideal scenario for this package. $n>p$, so the data
 
 
 
-## Examples
+# Examples
 
-# A singlular fit
+## A singlular fit
 
 Using this package is very simple
 ```{r}
@@ -69,30 +69,49 @@ Now we can call gspam directly using the fused lasso prox, and visualize how the
 ```{r fig.width=6,fig.height=6}
 y <- example_data[,104]
 df <- example_data[,c(-102,-103,-104)]
-results <- gspam(df,y,'fl','quad')
-plot(results)
+results1 <- gspam(df,y,'fl','quad')
+plot(results1)
 ```
 
 
 Encouragingly, we see a plateau at 6 active features, which is the true number of signal features, suggesting that it is "difficult" for the noise features to enter the model. We can verify this by the following:
 
 ```{r}
-print(head(results$fitted[[20]][,c(1:6,102)]))
+print(head(results1$fitted[[20]][,c(1:6,102)]))
 ```
 
 
 This helps to verify that we are only fitting the true signal features in this lambda range.
 
-# Cross-validation
+## Cross-validation
 
 The other major function in this package is gspam.cv . It too has a corresponding plot() function. The setup for crossvalidation is similar, with the default number of folds being 10. We will utilize the binary data for this example.
 
 ```{r fig.width=6,fig.height=6}
 y <- example_data[,103]
 df <- example_data[,c(-102,-103,-104)]
-results <- gspam.cv(df,y,'fl','log')
-plot(results)
+results2 <- gspam.cv(df,y,'fl','log')
+plot(results2)
 ```
 
 
 The results here are less promising, owing to the reduced information from binary data. There is increased variability in our estimate as lambda decreases, likely owing to the fact that we are mostly fitting noise in a large range of values. This example is illustrative of the fact that we will have many problems with binary data in the high-dimensional setting.
+
+## Prediction
+
+The final pair of functions are the predict functions. For solving a lambda path, you need to specify the position on the lambda path on which to predict. For a gspam.cv object, we use the lambda pair with the lowest mean loss.
+
+```{r}
+y <- example_data[,103]
+df <- example_data[,c(-102,-103,-104)]
+results3 <- gspam(df,y,'fl','log')
+new_data  <- as.data.frame(matrix(rnorm(10*100),ncol=100))
+new_data <- cbind(new_data, sample(c('yes','no','maybe'),10,replace = TRUE))
+print(ncol(new_data))
+predict(results3,new_data,50)
+```
+
+```{r}
+predict(results2,new_data)
+```
+

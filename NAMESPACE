@@ -2,10 +2,11 @@
 
 S3method(plot,gspam)
 S3method(plot,gspam.cv)
+S3method(predict,gspam)
+S3method(predict,gspam.cv)
 export(grad)
 export(gspam)
 export(gspam.cv)
 export(loss)
-export(predict)
 importFrom(Rcpp,sourceCpp)
 useDynLib(gspam)
