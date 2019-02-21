@@ -125,45 +125,4 @@ arma::vec lambda_path(std::vector<feature *> features, residual *y,
   return lambda_vec;
 };
 
-//
-//
-//
-// // Generalized Sparse Additive Model Solver for categorical vector of
-// features
-// //' @title Default Generalized Sparse Additive Model Solver with single
-// Prespecified variational penalty and lambda's
-// //' @description Fit model as specified by user for a single variational
-// penalty (matrix of X-values).
-// //' @name gspam
-// //' @param vector of numeric categories
-// //' @param y response column vector
-// //' @param type of prox to use
-// //' @param sparsity penalty
-// //' @param variational penalty
-// //' @export
-// // [[Rcpp::export(name="gspam_cat_solver")]]
-// arma::mat gspam_cat_solver(arma::mat data, arma::vec y, arma::mat counts,
-// std::string prox_type, double lambda1){
-//   std::vector<feature *> features;
-//   vec temp;
-//   vec coltemp;
-//   for (int i = 0; i < data.n_cols; i++) {
-//     temp = data.col(i);
-//     coltemp=counts.col(i);
-//     feature *temp1 = new feature(prox_type, &temp,&coltemp);
-//     features.push_back(temp1);
-//   };
-//   residual *test_y = new residual(&y);
-//   int i=0;
-//   while (test_y->resdiffnorm > EPS & i < MAXIT) {
-//     test_y->resid->print();
-//     fit_step(features, test_y, lambda1,0,1.0/features.size());
-//     i++;
-//   }
-//   arma::mat fitted=mat(data.n_rows, data.n_cols, fill::zeros);
-//   cout<<data.n_cols<<endl;
-//   for (int i = 0; i < data.n_cols; i++) {
-//     fitted.col(i)=*features.at(i)->fitted;
-//   };
-//   return fitted;
-// }
+

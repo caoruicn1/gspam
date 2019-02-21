@@ -70,4 +70,13 @@ test_that("catlog", {
   results <- gspam_full(cbind(numdata,X),y,prox_type,"log",0.5)
   end.time <- Sys.time()
   end.time-start.time
+  
+  
+  plot(X[,1],sig[,1]*beta[1])
+  points(X[,1],results$fitted[[20]][,3],col="red")
+  
+  plot(numdata,(numdata== 1)-2*(numdata == 2),ylim = c(-2,2))
+  points(numdata,results$fitted[[20]][,2],col="red")
+  
+  
 })

@@ -1,5 +1,5 @@
 ---
-title: "Intro to Gspam"
+title: "Intro to gspam"
 author: "Thayer Fisher"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
@@ -7,6 +7,8 @@ vignette: >
   %\VignetteIndexEntry{Vignette Title}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+header-includes:
+  - \usepackage{bbm}
 ---
 
 ```{r setup, include = FALSE}
@@ -16,50 +18,54 @@ knitr::opts_chunk$set(
 )
 ```
 
-## gspam
+## Introduction
 
 gspam is a collection of solvers aimed at solving the following problem:
 
 $$\min_f\sum_{i=1}^{n}\ell(y_i,\sum_{j=1}^{p}f_j(x_{i,j})+\lambda_1\sum_{j=1}^{p}P(f_j)+\lambda_2\sum_{j=1}^{p}\Vert f_j\Vert_n$$
 
-We do so by proximal gradient descent. Currently, the package supports logistic and quadratic losses, and fused lasso, polynomial basis, and categorical variational penalties.
+This type of penalized nonparametric regression is ideal in situations where we have high-dimensional data witha  sparse, nonlinear signal. In this case, we can trade off between sparsity of the signal in the features, and complexity of the function of each feature in the mean model. More information about the statistical properties of this method will be availible here once the publication becomes publicly-available.
+
+We solve these problems by proximal gradient descent. Currently, the package supports logistic and quadratic losses, and fused lasso, polynomial basis, and categorical variational penalties.
+
+## Dataset
+
+This package includes a sample data set. It has 101 features and 100 observations. 100 of these features are normally distributed, and therefore continuous. One of them is categorical with 3 categories: "yes", "no", and "maybe". Binary and real-valued outcomes are generated based on this data. The true mean model is:
+
+\begin{aligned}
+f(X_i)&= \mathbb{1}(x_c = \text{no})-\mathbb{1}(x_{c}=\text{yes})+\sum_{j=1}^{5}\left(\mathbb{1}(x_{ij}>0)-\mathbb{1}(x_{ij}<0)\right).
+\end{aligned}
+For the binary case,
+$$P(y_i=1| X_i) = \text{expit}(f(X_i)).$$
+For the real-valued case,
+$$E(y_i| X_i) = f(X_i)+\epsilon_i.$$
+Where $\epsilon_i\stackrel{iid}{\sim} N(0,1)$.
+
+The above case is a somewhat ideal scenario for this package. $n=p$, so the data are fairly high-dimensional, and the mean model is non-linear and sparse, but still with a recoverable signal.
+
 
 
 ## Examples
-```{r eval = F}
-# Predicting a binary outcome y from 1 categorical variable and 100 numerical variables.
-  set.seed(1408)
-  # Fused Lasso prox, log loss
-  
-  ## Set Params
-  
-  # Number of obs
-  n <- 100
-  # Number of features
-  p <- 100
-  # Number of numeric signal features
-  s <- 5
-  # Ratio of shape tuning parameter to sparsity tuning parameter
-  alpha <- 0.5
-  # Sample randomly from 3 categories
-  cats <- c("yes", "no","maybe")
-  cat_data <- sample(cats, n, replace =T)
-  
-  # Convert categories to numeric values labeled 0:(number_of_categories-1) so we can put them in a matrix and the solver can read them
-  cats <-rownames(table(cat_data))
-  numdata<-match(cat_data,cats)-1
-  
-  # X is random normal
-  X <- matrix(rnorm(n*p),ncol=p)
-  beta <- c(rep(1,s),rep(0,p-s))
-  sig <- sign(X)
-  Using logit link, generate y with signal (X*beta+(cat==no)-2*(cat==yes))
-  y <- rbinom(n,size=1,prob=expit(sig %*% beta+(numdata== 1)-2*(numdata == 2)))
-  # Vector for which the i'th entry specifies the prox function to be used for the i'th column of the data
-  prox_type <- c("cat",rep("fl",p))
-  # Run solver with log loss
-  results <- gspam_full(cbind(numdata,X),y,prox_type,"log",0.5)
 
-
+Using this package is very simple
+```{r}
+library(gspam)
+data(example_data)
+print(head(example_data[,c(1,2,3,4,5,101,102,103,104)]))
 ```
 
+
+We see here that the first 5, actually the first 100, columns are numeric, the 101st is categorical, and then we get the outcome information mentioned above. Lets start with a real-valued outcome. First we remove the true signal and the binary outcome. 
+
+```{r}
+y <- example_data[,104]
+df <- example_data[,c(-102,-103,-104)]
+```
+
+Now we can call gspam directly:
+
+```{r}
+y <- example_data[,104]
+df <- example_data[,c(-102,-103,-104)]
+results <- gspam
+```

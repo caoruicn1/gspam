@@ -80,17 +80,6 @@ double interpolate(arma::mat x, arma::mat fitted, arma::vec sort_point) {
   return new_fitted;
 }
 
-// Generalized Sparse Additive Model Solver for vector of values
-//' @title Default Generalized Sparse Additive Model Solver that calculates
-//' lambda path based on mixture value.
-//' @description Fit model as specified by user for calculated range of lambda
-//' values.
-//' @name gspam_full
-//' @param data n by p matrix of inputs
-//' @param y response column vector
-//' @param type of prox to use
-//' @param scalar value lambda2=alpha*lambda1
-//' @export
 // [[Rcpp::export(name="gspam_full")]]
 Rcpp::List gspam_full(arma::mat data, arma::vec y,
                       std::vector<std::string> prox_type, std::string loss_type,

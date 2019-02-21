@@ -42,16 +42,6 @@ interpolate <- function(x, fitted, sort_point) {
     .Call('_gspam_interpolate', PACKAGE = 'gspam', x, fitted, sort_point)
 }
 
-#' @title Default Generalized Sparse Additive Model Solver that calculates
-#' lambda path based on mixture value.
-#' @description Fit model as specified by user for calculated range of lambda
-#' values.
-#' @name gspam_full
-#' @param data n by p matrix of inputs
-#' @param y response column vector
-#' @param type of prox to use
-#' @param scalar value lambda2=alpha*lambda1
-#' @export
 gspam_full <- function(data, y, prox_type, loss_type, alpha) {
     .Call('_gspam_gspam_full', PACKAGE = 'gspam', data, y, prox_type, loss_type, alpha)
 }

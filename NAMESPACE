@@ -2,11 +2,11 @@
 
 export(get_lambdas)
 export(grad)
+export(gspam)
 export(gspam.cv)
 export(gspam_c)
 export(gspam_c_vec)
 export(gspam_cat_build)
-export(gspam_full)
 export(interpolate)
 export(interpolate_vec)
 export(loss)

@@ -89,6 +89,9 @@ vec cat_prox(feature *fused, residual *y, double lambda1, double t) {
   vec jresid = *fused->fitted - *y->resid * t;
   vec *fitted = new vec(fused->fitted->n_rows);
   for (int i = 0; i < fused->fitted->n_rows; i++) {
+    if(fused->x->at(i) == 0)
+      throw("category not recognized");
+    else
     fused->buffer->at(fused->x->at(i)) =
         fused->buffer->at(fused->x->at(i)) + jresid.at(i);
   };
