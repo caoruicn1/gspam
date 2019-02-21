@@ -87,7 +87,6 @@ gspam.cv <- function(x,y,prox_type,loss_type,alpha=0.5,k=10){
   fitted <- gspam_full(data,y,prox_type,loss_type,alpha=0.5)
   best_lambda1 <- lambda1[which.min(rowMeans(mselist))]
   best_fit <- fitted$fitted[[which(lambda1 == best_lambda1)]]
-  print(fitted$lambda1)
   sds <- apply(mselist,1,sd)/sqrt(k)
   lower <- rowMeans(mselist)-1.96*sds
   upper <- rowMeans(mselist)+1.96*sds
@@ -162,7 +161,6 @@ predict.gspam.cv<-function(data,new_points){
     approx(x=old_x[,i],y=old_fitted[,(i+1)],xout = new_points[,i])$y
     fitted[,i]<- approx(x=old_x[,i],y=old_fitted[,(i+1)],xout = new_points[,i],rule = 2)$y
   }
-  print(length(rowSums(fitted)))
   predictions <- rowSums(fitted)+ old_fitted[1,1]
   return(predictions)
 }

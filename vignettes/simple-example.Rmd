@@ -107,11 +107,14 @@ df <- example_data[,c(-102,-103,-104)]
 results3 <- gspam(df,y,'fl','log')
 new_data  <- as.data.frame(matrix(rnorm(10*100),ncol=100))
 new_data <- cbind(new_data, sample(c('yes','no','maybe'),10,replace = TRUE))
-print(ncol(new_data))
 predict(results3,new_data,50)
 ```
 
+Now predicting using the best model from cross-validation:
 ```{r}
 predict(results2,new_data)
 ```
+
+
+We can see that while the sign of the fits is mostly the same, the actual values are quite different. This suggests that we should use cross-validation in most cases for this method, rather than picking a random lambda on the solution path.
 
