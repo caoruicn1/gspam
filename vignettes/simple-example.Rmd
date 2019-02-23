@@ -107,14 +107,25 @@ df <- example_data[,c(-102,-103,-104)]
 results3 <- gspam(df,y,'fl','log')
 new_data  <- as.data.frame(matrix(rnorm(10*100),ncol=100))
 new_data <- cbind(new_data, sample(c('yes','no','maybe'),10,replace = TRUE))
-predict(results3,new_data,50)
+prediction_path <- predict(results3,new_data,50)
+prediction_path
 ```
 
 Now predicting using the best model from cross-validation:
 ```{r}
-predict(results2,new_data)
+prediction_cv <- predict(results2,new_data)
+prediction_cv
 ```
 
 
-We can see that while the sign of the fits is mostly the same, the actual values are quite different. This suggests that we should use cross-validation in most cases for this method, rather than picking a random lambda on the solution path.
+We can see that while the sign of the fits is mostly the same, the actual values are quite different. This suggests that we should use cross-validation in most cases for this method, rather than picking a random lambda on the solution path. We can easily change these to probability scale:
 
+```{r}
+print("Path:")
+expit(prediction_path)
+print("CV:")
+expit(prediction_cv)
+
+```
+
+This concludes the summary of the 6 major functions currently supported by gspam.

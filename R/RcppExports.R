@@ -11,22 +11,9 @@
 #' @param type of prox to use
 #' @param sparsity penalty
 #' @param variational penalty
-gspam_c <-
-  function(data,
-           y,
-           prox_type,
-           loss_type,
-           lambda1 = 0.0,
-           lambda2 = 0.0) {
-    .Call('_gspam_gspam_c',
-          PACKAGE = 'gspam',
-          data,
-          y,
-          prox_type,
-          loss_type,
-          lambda1,
-          lambda2)
-  }
+gspam_c <- function(data, y, prox_type, loss_type, lambda1 = 0.0, lambda2 = 0.0) {
+    .Call('_gspam_gspam_c', PACKAGE = 'gspam', data, y, prox_type, loss_type, lambda1, lambda2)
+}
 
 #' @title Default Generalized Sparse Additive Model Solver with vector of
 #' prespecified variational penalties and sparsity penalties
@@ -38,22 +25,9 @@ gspam_c <-
 #' @param type of prox to use
 #' @param sparsity penalties
 #' @param variational penalties
-gspam_c_vec <-
-  function(data,
-           y,
-           prox_type,
-           loss_type,
-           lambda1,
-           lambda2) {
-    .Call('_gspam_gspam_c_vec',
-          PACKAGE = 'gspam',
-          data,
-          y,
-          prox_type,
-          loss_type,
-          lambda1,
-          lambda2)
-  }
+gspam_c_vec <- function(data, y, prox_type, loss_type, lambda1, lambda2) {
+    .Call('_gspam_gspam_c_vec', PACKAGE = 'gspam', data, y, prox_type, loss_type, lambda1, lambda2)
+}
 
 #' @title Default Generalized Sparse Additive Model Solver with vector of
 #' prespecified variational penalties and sparsity penalties
@@ -65,26 +39,9 @@ gspam_c_vec <-
 #' @param type of prox to use
 #' @param sparsity penalties
 #' @param variational penalties
-gspam_c_print <-
-  function(data,
-           y,
-           prox_type,
-           loss_type,
-           lambda1,
-           lambda2) {
-    invisible(
-      .Call(
-        '_gspam_gspam_c_print',
-        PACKAGE = 'gspam',
-        data,
-        y,
-        prox_type,
-        loss_type,
-        lambda1,
-        lambda2
-      )
-    )
-  }
+gspam_c_print <- function(data, y, prox_type, loss_type, lambda1, lambda2) {
+    invisible(.Call('_gspam_gspam_c_print', PACKAGE = 'gspam', data, y, prox_type, loss_type, lambda1, lambda2))
+}
 
 #' @title Default Generalized Sparse Additive Model Solver that calculates
 #' lambda path based on mixture value.
@@ -96,13 +53,7 @@ gspam_c_print <-
 #' @param type of prox to use
 #' @param scalar value lambda2=alpha*lambda1
 gspam_full <- function(data, y, prox_type, loss_type, alpha) {
-  .Call('_gspam_gspam_full',
-        PACKAGE = 'gspam',
-        data,
-        y,
-        prox_type,
-        loss_type,
-        alpha)
+    .Call('_gspam_gspam_full', PACKAGE = 'gspam', data, y, prox_type, loss_type, alpha)
 }
 
 #' @title Lambda path retrieval for given data and outcome
@@ -112,13 +63,7 @@ gspam_full <- function(data, y, prox_type, loss_type, alpha) {
 #' @param type of prox to use
 #' @param scalar value lambda2=alpha*lambda1
 get_lambdas <- function(data, y, prox_type, loss_type, alpha) {
-  .Call('_gspam_get_lambdas',
-        PACKAGE = 'gspam',
-        data,
-        y,
-        prox_type,
-        loss_type,
-        alpha)
+    .Call('_gspam_get_lambdas', PACKAGE = 'gspam', data, y, prox_type, loss_type, alpha)
 }
 
 #' @title Generalized Loss function
@@ -129,7 +74,7 @@ get_lambdas <- function(data, y, prox_type, loss_type, alpha) {
 #' @param type type of loss to use
 #' @export
 loss <- function(y, theta, type) {
-  .Call('_gspam_loss', PACKAGE = 'gspam', y, theta, type)
+    .Call('_gspam_loss', PACKAGE = 'gspam', y, theta, type)
 }
 
 #' @title Generalized Loss Grad Function
@@ -140,5 +85,6 @@ loss <- function(y, theta, type) {
 #' @param type type of loss to use
 #' @export
 grad <- function(y, theta, type) {
-  .Call('_gspam_grad', PACKAGE = 'gspam', y, theta, type)
+    .Call('_gspam_grad', PACKAGE = 'gspam', y, theta, type)
 }
+
