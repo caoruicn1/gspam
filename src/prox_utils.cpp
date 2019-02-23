@@ -41,6 +41,7 @@ double log_loss(vec y, vec theta) {
   vec t = exp(theta);
   vec t1 = log(t / (1 + t));
   double temp = -1 * dot(y, t1);
+  ///cout<< temp - dot((1 - y), log(1 / (1 + exp(theta))))<<endl;
   return temp - dot((1 - y), log(1 / (1 + exp(theta))));
 };
 

@@ -175,17 +175,18 @@ bool linesearch(residual *y, mat old_fit, mat new_fit, double t,
 /// Step size
 double fit_step(std::vector<feature *> features, residual *resid,
                 double lambda1, double lambda2, double t, vec to_fit) {
+  t = 1.0/features.size();
   mat old_fit = mat(resid->y_->n_rows, features.size());
   mat prox_fit = mat(resid->y_->n_rows, features.size());
   old_fit = get_fit_mat(features);
   prox_fit = new_fit(features, resid, lambda1, lambda2, t, to_fit);
 
-  /// TODO: FIX STEP SIZE, IT IS UNSTABLE
+  /*/// TODO: FIX STEP SIZE, IT IS UNSTABLE
    while (linesearch(resid, old_fit, prox_fit, t, resid->loss_type)) {
      t *= .8;
      prox_fit = new_fit(features, resid, lambda1, lambda2, t, to_fit);
    }
-   // std::cout<<"RUNNING FIT w step stize : "<<t<<endl;
+   // std::cout<<"RUNNING FIT w step stize : "<<t<<endl;*/
   int n = resid->resid->n_rows;
   for (int i = 0; i < features.size(); i++) {
     *features.at(i)->fitted = prox_fit.col(i);

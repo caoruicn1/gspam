@@ -61,18 +61,20 @@ print(head(example_data[,c(1,2,3,4,5,101,102,103,104)]))
 We see here that the first 5, actually the first 100, columns are numeric, the 101st is categorical, and then we get the outcome information mentioned above. Lets start with a real-valued outcome. First we remove the true signal and the binary outcome. 
 
 ```{r}
-y <- example_data[c(1:990),104]
-df <- example_data[c(1:990),c(-102,-103,-104)]
-new_y <- example_data[c(991:1000),104]
-new_data <- example_data[c(991:1000),c(-102,-103,-104)]
+y_quad <- example_data[c(1:990),104]
+y_log <- example_data[c(1:990),103]
+true_signal <- example_data[,102]
+x <- example_data[c(1:990),c(-102,-103,-104)]
+
+test_y_quad <- example_data[c(991:1000),104]
+test_y_log <- example_data[c(991:1000),103]
+test_x <- example_data[c(991:1000),c(-102,-103,-104)]
 ```
 
 Now we can call gspam directly using the fused lasso prox, and visualize how the number of active features increases as the sparsity penalty decreases. 
 
 ```{r fig.width=6,fig.height=6}
-y <- example_data[,104]
-df <- example_data[,c(-102,-103,-104)]
-results1 <- gspam(df,y,'fl','quad')
+results1 <- gspam(x,y_quad,'fl','quad')
 plot(results1)
 ```
 
@@ -91,9 +93,7 @@ This helps to verify that we are only fitting the true signal features in this l
 The other major function in this package is gspam.cv . It too has a corresponding plot() function. The setup for crossvalidation is similar, with the default number of folds being 10. We will utilize the binary data for this example.
 
 ```{r fig.width=6,fig.height=6}
-y <- example_data[,103]
-df <- example_data[,c(-102,-103,-104)]
-results2 <- gspam.cv(df,y,'fl','log')
+results2 <- gspam.cv(x,y_log,'fl','log')
 plot(results2)
 ```
 
@@ -105,16 +105,14 @@ The results here are less promising, owing to the reduced information from binar
 The final pair of functions are the predict functions. For solving a lambda path, you need to specify the position on the lambda path on which to predict. For a gspam.cv object, we use the lambda pair with the lowest mean loss.
 
 ```{r}
-y <- example_data[,103]
-df <- example_data[,c(-102,-103,-104)]
-results3 <- gspam(df,y,'fl','log')
-prediction_path <- predict(results3,new_data,50)
+results3 <- gspam(x,y_log,'fl','log')
+prediction_path <- predict(results3,test_x,50)
 prediction_path
 ```
 
 Now predicting using the best model from cross-validation:
 ```{r}
-prediction_cv <- predict(results2,new_data)
+prediction_cv <- predict(results2,test_x)
 prediction_cv
 ```
 
@@ -127,7 +125,7 @@ expit(prediction_path)
 print("CV:")
 expit(prediction_cv)
 print("actual")
-expit(new_y)
+expit(true_signal[991:1000])
 ```
 
 This concludes the summary of the 6 major functions currently supported by gspam.
