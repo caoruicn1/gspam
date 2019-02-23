@@ -51,6 +51,7 @@ The above case is a somewhat ideal scenario for this package. $n>p$, so the data
 
 Using this package is very simple
 ```{r}
+set.seed(1408)
 library(gspam)
 data(example_data)
 print(head(example_data[,c(1,2,3,4,5,101,102,103,104)]))
@@ -60,8 +61,10 @@ print(head(example_data[,c(1,2,3,4,5,101,102,103,104)]))
 We see here that the first 5, actually the first 100, columns are numeric, the 101st is categorical, and then we get the outcome information mentioned above. Lets start with a real-valued outcome. First we remove the true signal and the binary outcome. 
 
 ```{r}
-y <- example_data[,104]
-df <- example_data[,c(-102,-103,-104)]
+y <- example_data[c(1:990),104]
+df <- example_data[c(1:990),c(-102,-103,-104)]
+new_y <- example_data[c(991:1000),104]
+new_data <- example_data[c(991:1000),c(-102,-103,-104)]
 ```
 
 Now we can call gspam directly using the fused lasso prox, and visualize how the number of active features increases as the sparsity penalty decreases. 
@@ -105,8 +108,6 @@ The final pair of functions are the predict functions. For solving a lambda path
 y <- example_data[,103]
 df <- example_data[,c(-102,-103,-104)]
 results3 <- gspam(df,y,'fl','log')
-new_data  <- as.data.frame(matrix(rnorm(10*100),ncol=100))
-new_data <- cbind(new_data, sample(c('yes','no','maybe'),10,replace = TRUE))
 prediction_path <- predict(results3,new_data,50)
 prediction_path
 ```
@@ -125,7 +126,8 @@ print("Path:")
 expit(prediction_path)
 print("CV:")
 expit(prediction_cv)
-
+print("actual")
+expit(new_y)
 ```
 
 This concludes the summary of the 6 major functions currently supported by gspam.
