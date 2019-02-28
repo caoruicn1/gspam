@@ -2,29 +2,13 @@
 % Please edit documentation in R/gspam.R
 \name{gspam.cv}
 \alias{gspam.cv}
-\alias{gspam}
 \title{Crossvalidation for gspam}
 \usage{
-gspam(x, y, prox_type, loss_type, alpha = 0.5)
-
 gspam.cv(x, y, prox_type, loss_type, alpha = 0.5, k = 10,
   folds = NULL)
 }
 \arguments{
 \item{x}{covariate matrix/data frame}
-
-\item{y}{response vector, if the loss type is "quad" then this is a vector of real-values.
-If the loss type is "log" then this is a vector of binary values.}
-
-\item{prox_type}{vector of prox types to use, or a single prox type}
-
-\item{loss_type}{type of loss to use}
-
-\item{alpha}{mixture of lambdas (lambda2= alpha*lambda1)}
-
-\item{k}{number of folds, default is 10}
-
-\item{data}{covariate matrix/data frame}
 
 \item{y}{response vector}
 
@@ -35,9 +19,9 @@ If the loss type is "log" then this is a vector of binary values.}
 \item{alpha}{mixture of lambdas (lambda2= alpha*lambda1)}
 
 \item{k}{number of folds, default is 10}
+
+\item{folds}{Optional prespecified fold ids}
 }
 \description{
-Fits over generated lambda path for specified prox and loss.
-
 Splits data into train and test sets, tests over lambda path for entire data.
 }

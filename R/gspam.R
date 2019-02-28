@@ -1,14 +1,13 @@
 # Generalized Sparse Additive Model Solver with crossvalidation
 #' @title Crossvalidation for gspam
 #' @description Fits over generated lambda path for specified prox and loss.
-#' @name gspam.cv
+#' @name gspam
 #' @param x covariate matrix/data frame
 #' @param y response vector, if the loss type is "quad" then this is a vector of real-values.
 #' If the loss type is "log" then this is a vector of binary values.
 #' @param prox_type vector of prox types to use, or a single prox type
 #' @param loss_type type of loss to use
 #' @param alpha mixture of lambdas (lambda2= alpha*lambda1)
-#' @param k number of folds, default is 10
 #' @export
 gspam <- function(x, y, prox_type, loss_type, alpha = 0.5) {
   if (length(prox_type) < ncol(x)) {
@@ -18,13 +17,14 @@ gspam <- function(x, y, prox_type, loss_type, alpha = 0.5) {
   x_mat <- as.matrix(temp_list[[1]])
   mappings  <- temp_list[[2]]
   prox_type <- temp_list[[3]]
-  results <- gspam:::gspam_full(x_mat, y, prox_type, loss_type, alpha)
+  results <- gspam_full(x_mat, y, prox_type, loss_type, alpha)
   results$data <- x
   if(is.data.frame(x)){
   for (i in 1:100) {
     colnames(results$fitted[[i]]) <- c('intercept', names(x))
   }
   }
+  results<- c(results, loss= loss_type)
   class(results) <- c('gspam')
   return(results)
 }
@@ -34,12 +34,13 @@ gspam <- function(x, y, prox_type, loss_type, alpha = 0.5) {
 #' @title Crossvalidation for gspam
 #' @description Splits data into train and test sets, tests over lambda path for entire data.
 #' @name gspam.cv
-#' @param data covariate matrix/data frame
+#' @param x covariate matrix/data frame
 #' @param y response vector
 #' @param prox_type vector of prox types to use
 #' @param loss_type type of loss to use
 #' @param alpha mixture of lambdas (lambda2= alpha*lambda1)
 #' @param k number of folds, default is 10
+#' @param folds Optional prespecified fold ids
 #' @export
 gspam.cv <- function(x,
                      y,
@@ -108,6 +109,10 @@ gspam.cv <- function(x,
   sds <- apply(mselist, 1, sd) / sqrt(k)
   lower <- rowMeans(mselist) - 1.96 * sds
   upper <- rowMeans(mselist) + 1.96 * sds
+  out_folds <- rep(0,nrow(data))
+  for(i in 1:nrow(data)){
+    out_folds[randomizer[i]] <- folds[i] 
+  }
   results <-
     list(
       'data' = data,
@@ -117,7 +122,9 @@ gspam.cv <- function(x,
       lowermse = lower,
       uppermse = upper,
       full = mselist,
-      'best_fit' = best_fit
+      'best_fit' = best_fit,
+      'loss'=loss_type,
+      'folds'= out_folds
     )
   class(results) <- c("gspam.cv")
   return(results)
@@ -144,12 +151,14 @@ prep_df <- function(df, prox_type) {
 
 #' @title Predict Function
 #' @description Predict new y values from a data frame or matrix of covariates with the same number of columns as the original
-#' @name predict
+#' @name predict.gspam
 #' @param data object of class gspam
 #' @param new_points feature matrix or data frame.
 #' @param p scalar for lambda position to use (1 is the lowest lambda pair on the path)
+#' @param type One of "response" or "link". Response predicts on the y scale, "link" predicts on the natural parameter scale.
 #' @export
-predict.gspam <- function(data, new_points, p) {
+predict.gspam <- function(data, new_points, p,type= "response") {
+  loss <- data$loss
   fitted <-
     matrix(rep(0, nrow(new_points) * ncol(new_points)), ncol = ncol(new_points))
   old_fitted <- data$fitted[[p]]
@@ -170,22 +179,29 @@ predict.gspam <- function(data, new_points, p) {
       )$y
   }
   predictions <- rowSums(fitted) + old_fitted[1, 1]
+  if(type == "response"){
+    predictions <- link(predictions,loss)
+  }
+  else if( type != "link"){
+    error("Invalid response type")
+  }
   return(predictions)
 }
 
 #' @title Predict Function for cv object
 #' @description Predict new y values from a data frame or matrix of covariates with the same number of columns as the original.
 #'  Uses the fit with the lowest MSE from cv
-#' @name predict
+#' @name predict.gspam.cv
 #' @param data object of class gspam.cv
 #' @param new_points feature matrix or data frame.
-#' @param p scalar for lambda position to use (1 is the lowest lambda pair on the path)
+#' @param type One of "response" or "link". Response predicts on the y scale, "link" predicts on the natural parameter scale.
 #' @export
-predict.gspam.cv <- function(data, new_points) {
+predict.gspam.cv <- function(data, new_points,type = 'response') {
   fitted <-
     matrix(rep(0, nrow(new_points) * ncol(new_points)), ncol = ncol(new_points))
   old_fitted <- data$best_fit
   old_x <- data$data
+  loss <- data$loss
   if (ncol(new_points) != (ncol(old_x))) {
     throw("New x object does not have same number of columns as original fitted object.")
   }
@@ -203,13 +219,19 @@ predict.gspam.cv <- function(data, new_points) {
       )$y
   }
   predictions <- rowSums(fitted) + old_fitted[1, 1]
+  if(type == "response"){
+    predictions <- link(predictions,loss)
+  }
+  else if( type != "link"){
+    error("Invalid response type")
+  }
   return(predictions)
 }
 
 #' @title Plot the sparsity vs. lambda for a fit of gspam
 #' @description Plots the number of active features as log(lambda1) varies
 #' @name plot.gspam
-#' @param fitted gspam object
+#' @param x gspam object
 #' @export
 plot.gspam <- function(x) {
   active_list <- rep(0, 100)
@@ -234,7 +256,7 @@ plot.gspam <- function(x) {
 
 #' @title Plot the mean loss vs log lambda
 #' @description Plots the mean of specified loss vs log(lambda1) for a fitted gspam.cv object
-#' @name plot.gspam
+#' @name plot.gspam.cv
 #' @param x fitted gspam.cv object
 #' @export
 plot.gspam.cv <- function(x) {
@@ -263,7 +285,7 @@ plot.gspam.cv <- function(x) {
 #' @title expit
 #' @description expit function
 #' @name expit
-#' @param vector or scalar to use
+#' @param x vector or scalar to use
 #' @export
 expit <- function(x) {
   return(exp(x) / (1 + exp(x)))
@@ -272,10 +294,20 @@ expit <- function(x) {
 #' @title logit
 #' @description logit function
 #' @name logit
-#' @param vector or scalar to use
+#' @param x vector or scalar to use
 #' @export
 logit <- function(x) {
   return(log(x / (1 - x)))
+}
+
+link <- function(x,loss){
+  if(loss == "quad"){
+    return(x)
+  } else if (loss == "log"){
+    return(expit(x))
+  } else{
+    error("invalid loss type")
+  }
 }
 
 #' @useDynLib gspam

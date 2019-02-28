@@ -8,9 +8,10 @@
 #' @name gspam_c
 #' @param data n by p matrix of inputs
 #' @param y response column vector
-#' @param type of prox to use
-#' @param sparsity penalty
-#' @param variational penalty
+#' @param prox_type type of prox to use
+#' @param loss_type type of loss to use
+#' @param lambda1 sparsity penalty
+#' @param lambda2 variational penalty
 gspam_c <- function(data, y, prox_type, loss_type, lambda1 = 0.0, lambda2 = 0.0) {
     .Call('_gspam_gspam_c', PACKAGE = 'gspam', data, y, prox_type, loss_type, lambda1, lambda2)
 }
@@ -22,9 +23,10 @@ gspam_c <- function(data, y, prox_type, loss_type, lambda1 = 0.0, lambda2 = 0.0)
 #' @name gspam_c_vec
 #' @param data n by p matrix of inputs
 #' @param y response column vector
-#' @param type of prox to use
-#' @param sparsity penalties
-#' @param variational penalties
+#' @param prox_type type of prox to use
+#' @param loss_type type of loss to use
+#' @param lambda1 sparsity penalties
+#' @param lambda2 variational penalties
 gspam_c_vec <- function(data, y, prox_type, loss_type, lambda1, lambda2) {
     .Call('_gspam_gspam_c_vec', PACKAGE = 'gspam', data, y, prox_type, loss_type, lambda1, lambda2)
 }
@@ -36,8 +38,9 @@ gspam_c_vec <- function(data, y, prox_type, loss_type, lambda1, lambda2) {
 #' @name gspam_full
 #' @param data n by p matrix of inputs
 #' @param y response column vector
-#' @param type of prox to use
-#' @param scalar value lambda2=alpha*lambda1
+#' @param prox_type type of prox to use
+#' @param loss_type type of loss to use
+#' @param alpha scalar value lambda2=alpha*lambda1
 gspam_full <- function(data, y, prox_type, loss_type, alpha) {
     .Call('_gspam_gspam_full', PACKAGE = 'gspam', data, y, prox_type, loss_type, alpha)
 }
@@ -46,15 +49,16 @@ gspam_full <- function(data, y, prox_type, loss_type, alpha) {
 #' @name get_lambdas
 #' @param data n by p matrix of inputs
 #' @param y response column vector
-#' @param type of prox to use
-#' @param scalar value lambda2=alpha*lambda1
+#' @param prox_type type of prox to use
+#' @param loss_type type of loss to use
+#' @param alpha scalar value lambda2=alpha*lambda1
 get_lambdas <- function(data, y, prox_type, loss_type, alpha) {
     .Call('_gspam_get_lambdas', PACKAGE = 'gspam', data, y, prox_type, loss_type, alpha)
 }
 
 #' @title Generalized Loss function
 #' @description Applies specified loss to two vectors
-#' @name gspam_c
+#' @name loss
 #' @param y target of loss
 #' @param theta fitted values
 #' @param type type of loss to use
@@ -65,8 +69,8 @@ loss <- function(y, theta, type) {
 
 #' @title Generalized Loss Grad Function
 #' @description Applies specified grad of loss to two vectors
-#' @name gspam_c
-#' @param y target of loss
+#' @name grad
+#' @param y target of grad
 #' @param theta fitted values
 #' @param type type of loss to use
 #' @export

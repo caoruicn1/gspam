@@ -19,9 +19,10 @@
 //' @name gspam_c
 //' @param data n by p matrix of inputs
 //' @param y response column vector
-//' @param type of prox to use
-//' @param sparsity penalty
-//' @param variational penalty
+//' @param prox_type type of prox to use
+//' @param loss_type type of loss to use
+//' @param lambda1 sparsity penalty
+//' @param lambda2 variational penalty
 // [[Rcpp::export(name="gspam_c")]]
 Rcpp::List gspam_c(arma::mat data, arma::vec y,
                    std::vector<std::string> prox_type, std::string loss_type,
@@ -41,9 +42,10 @@ Rcpp::List gspam_c(arma::mat data, arma::vec y,
 //' @name gspam_c_vec
 //' @param data n by p matrix of inputs
 //' @param y response column vector
-//' @param type of prox to use
-//' @param sparsity penalties
-//' @param variational penalties
+//' @param prox_type type of prox to use
+//' @param loss_type type of loss to use
+//' @param lambda1 sparsity penalties
+//' @param lambda2 variational penalties
 // [[Rcpp::export(name="gspam_c_vec")]]
 Rcpp::List gspam_c_vec(arma::mat data, arma::vec y,
                        std::vector<std::string> prox_type,
@@ -69,8 +71,9 @@ Rcpp::List gspam_c_vec(arma::mat data, arma::vec y,
 //' @name gspam_full
 //' @param data n by p matrix of inputs
 //' @param y response column vector
-//' @param type of prox to use
-//' @param scalar value lambda2=alpha*lambda1
+//' @param prox_type type of prox to use
+//' @param loss_type type of loss to use
+//' @param alpha scalar value lambda2=alpha*lambda1
 // [[Rcpp::export(name="gspam_full")]]
 Rcpp::List gspam_full(arma::mat data, arma::vec y,
                       std::vector<std::string> prox_type, std::string loss_type,
@@ -92,8 +95,9 @@ Rcpp::List gspam_full(arma::mat data, arma::vec y,
 //' @name get_lambdas
 //' @param data n by p matrix of inputs
 //' @param y response column vector
-//' @param type of prox to use
-//' @param scalar value lambda2=alpha*lambda1
+//' @param prox_type type of prox to use
+//' @param loss_type type of loss to use
+//' @param alpha scalar value lambda2=alpha*lambda1
 // [[Rcpp::export(name="get_lambdas")]]
 Rcpp::List get_lambdas(arma::mat data, arma::vec y,
                        std::vector<std::string> prox_type,

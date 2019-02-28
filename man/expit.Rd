@@ -7,7 +7,7 @@
 expit(x)
 }
 \arguments{
-\item{vector}{or scalar to use}
+\item{x}{vector or scalar to use}
 }
 \description{
 expit function

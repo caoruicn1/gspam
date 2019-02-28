@@ -7,7 +7,7 @@
 logit(x)
 }
 \arguments{
-\item{vector}{or scalar to use}
+\item{x}{vector or scalar to use}
 }
 \description{
 logit function

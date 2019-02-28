@@ -2,39 +2,25 @@
 % Please edit documentation in R/RcppExports.R
 \name{gspam_c_vec}
 \alias{gspam_c_vec}
-\alias{gspam_c_print}
 \title{Default Generalized Sparse Additive Model Solver with vector of
 prespecified variational penalties and sparsity penalties}
 \usage{
 gspam_c_vec(data, y, prox_type, loss_type, lambda1, lambda2)
-
-gspam_c_print(data, y, prox_type, loss_type, lambda1, lambda2)
 }
 \arguments{
 \item{data}{n by p matrix of inputs}
 
 \item{y}{response column vector}
 
-\item{type}{of prox to use}
+\item{prox_type}{type of prox to use}
 
-\item{sparsity}{penalties}
+\item{loss_type}{type of loss to use}
 
-\item{variational}{penalties}
+\item{lambda1}{sparsity penalties}
 
-\item{data}{n by p matrix of inputs}
-
-\item{y}{response column vector}
-
-\item{type}{of prox to use}
-
-\item{sparsity}{penalties}
-
-\item{variational}{penalties}
+\item{lambda2}{variational penalties}
 }
 \description{
-Fit model as specified by user for a single variational penalty
-(matrix of X-values).
-
 Fit model as specified by user for a single variational penalty
 (matrix of X-values).
 }

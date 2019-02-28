@@ -58,7 +58,7 @@ vec log_grad(vec y, vec theta) { return (exp(theta) / (1 + exp(theta))) - y; };
 // Loss
 //' @title Generalized Loss function
 //' @description Applies specified loss to two vectors
-//' @name gspam_c
+//' @name loss
 //' @param y target of loss
 //' @param theta fitted values
 //' @param type type of loss to use
@@ -77,8 +77,8 @@ double loss(arma::vec y, arma::vec theta, std::string type) {
 // Loss
 //' @title Generalized Loss Grad Function
 //' @description Applies specified grad of loss to two vectors
-//' @name gspam_c
-//' @param y target of loss
+//' @name grad
+//' @param y target of grad
 //' @param theta fitted values
 //' @param type type of loss to use
 //' @export

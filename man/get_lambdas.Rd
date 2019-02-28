@@ -11,9 +11,9 @@ get_lambdas(data, y, prox_type, loss_type, alpha)
 
 \item{y}{response column vector}
 
-\item{type}{of prox to use}
+\item{prox_type}{type of prox to use}
 
-\item{scalar}{value lambda2=alpha*lambda1}
+\item{alpha}{scalar value lambda2=alpha*lambda1}
 }
 \description{
 Lambda path retrieval for given data and outcome

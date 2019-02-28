@@ -18,17 +18,19 @@ grad(y, theta, type)
 
 \item{y}{response column vector}
 
+\item{prox_type}{type of prox to use}
+
+\item{loss_type}{type of loss to use}
+
+\item{lambda1}{sparsity penalty}
+
+\item{lambda2}{variational penalty}
+
 \item{theta}{fitted values}
 
-\item{type}{of prox to use}
-
-\item{sparsity}{penalty}
-
-\item{variational}{penalty}
+\item{type}{type of loss to use}
 
 \item{y}{target of loss}
-
-\item{type}{type of loss to use}
 
 \item{y}{target of loss}
 
