@@ -20,8 +20,10 @@ gspam <- function(x, y, prox_type, loss_type, alpha = 0.5) {
   prox_type <- temp_list[[3]]
   results <- gspam:::gspam_full(x_mat, y, prox_type, loss_type, alpha)
   results$data <- x
+  if(is.data.frame(x)){
   for (i in 1:100) {
     colnames(results$fitted[[i]]) <- c('intercept', names(x))
+  }
   }
   class(results) <- c('gspam')
   return(results)
@@ -44,7 +46,8 @@ gspam.cv <- function(x,
                      prox_type,
                      loss_type,
                      alpha = 0.5,
-                     k = 10) {
+                     k = 10,
+                     folds = NULL) {
   if (length(prox_type) < ncol(x)) {
     prox_type <- rep(prox_type[1], ncol(x))
   }
@@ -56,13 +59,18 @@ gspam.cv <- function(x,
   lambdas <- get_lambdas(data, y, prox_type, loss_type, alpha)
   lambda1 <- lambdas$lambda1
   lambda2 <- lambdas$lambda2
+  if(is.null(folds)){
   # Randomly shuffle the data
   randomizer <- sample(nrow(data))
   rand_X <- data[randomizer, ]
   rand_y <- y[randomizer]
   # Create k equally size folds
   folds <- cut(seq(1, nrow(data)), breaks = k, labels = FALSE)
-  
+  }
+  else{
+    folds <- as.integer(folds)
+    k <- length(unique(folds))
+  }
   # Perform k fold cross validation
   mselist <- matrix(rep(0, k * 100), ncol = k)
   for (i in 1:k) {
@@ -73,8 +81,8 @@ gspam.cv <- function(x,
     trainy <- rand_y[-testIndexes]
     result <-
       gspam_c_vec(trainX, trainy, prox_type, loss_type, lambda1, lambda2)
-    if (is.nan(result$fitted[[20]][20, 20])) {
-      gspam_c_print(trainX, trainy, prox_type, loss_type, lambda1, lambda2)
+    if (is.nan(result$fitted[[20]][5, 2])) {
+      return(c(k,folds,result$fitted))
     }
     test_fits <- c()
     for (j in 1:100) {
