@@ -7,7 +7,8 @@
 \usage{
 gspam(x, y, prox_type, loss_type, alpha = 0.5)
 
-gspam.cv(x, y, prox_type, loss_type, alpha = 0.5, k = 10)
+gspam.cv(x, y, prox_type, loss_type, alpha = 0.5, k = 10,
+  folds = NULL)
 }
 \arguments{
 \item{x}{covariate matrix/data frame}

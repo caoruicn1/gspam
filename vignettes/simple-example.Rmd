@@ -54,21 +54,23 @@ Using this package is very simple
 set.seed(1408)
 library(gspam)
 data(example_data)
-print(head(example_data[,c(1,2,3,4,5,101,102,103,104)]))
+print(head(example_data[,c("true_signal","y_binary","y_continuous","cat_data","V1")]))
 ```
 
 
-We see here that the first 5, actually the first 100, columns are numeric, the 101st is categorical, and then we get the outcome information mentioned above. Lets start with a real-valued outcome. First we remove the true signal and the binary outcome. 
+We see here that the first 3 colums are the true signal, followed by binary outcomes and continuous outcomes generated from that data. The fourth column is a categorical covariate, and the following 100 columns are all real-values covariates. Lets start with a real-valued outcome. First we remove the true signal and the binary outcome. 
 
 ```{r}
-y_quad <- example_data[c(1:990),104]
-y_log <- example_data[c(1:990),103]
-true_signal <- example_data[,102]
-x <- example_data[c(1:990),c(-102,-103,-104)]
+train_rows <- c(1:990)
+test_rows <- c(991:1000)
+y_quad <- example_data[train_rows,3]
+y_log <- example_data[train_rows,2]
+true_signal <- example_data[,1]
+x <- example_data[train_rows,c(-1,-2,-3)]
 
-test_y_quad <- example_data[c(991:1000),104]
-test_y_log <- example_data[c(991:1000),103]
-test_x <- example_data[c(991:1000),c(-102,-103,-104)]
+test_y_quad <- example_data[test_rows,104]
+test_y_log <- example_data[test_rows,103]
+test_x <- example_data[test_rows,c(-102,-103,-104)]
 ```
 
 Now we can call gspam directly using the fused lasso prox, and visualize how the number of active features increases as the sparsity penalty decreases. 
@@ -82,7 +84,7 @@ plot(results1)
 Encouragingly, we see a plateau at 6 active features, which is the true number of signal features, suggesting that it is "difficult" for the noise features to enter the model. We can verify this by the following:
 
 ```{r}
-print(head(results1$fitted[[20]][,c(1:6,102)]))
+print(head(results1$fitted[[20]][,c(1:7)]))
 ```
 
 

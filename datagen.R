@@ -28,6 +28,6 @@ y_binary <- rbinom(n,size=1,prob=expit(true_signal))
 y_continuous <- rnorm(n,mean = true_signal, sd = 1 )
 
 data <- as.data.frame(X)
-example_data <- cbind(data,cat_data,true_signal,y_binary,y_continuous)
+example_data <- cbind(true_signal,y_binary,y_continuous,cat_data,data)
 
-usethis::use_data(example_data)
+usethis::use_data(example_data, overwrite = TRUE)
