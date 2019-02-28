@@ -13,6 +13,8 @@ get_lambdas(data, y, prox_type, loss_type, alpha)
 
 \item{prox_type}{type of prox to use}
 
+\item{loss_type}{type of loss to use}
+
 \item{alpha}{scalar value lambda2=alpha*lambda1}
 }
 \description{

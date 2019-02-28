@@ -2,16 +2,10 @@
 % Please edit documentation in R/RcppExports.R
 \name{gspam_c}
 \alias{gspam_c}
-\alias{loss}
-\alias{grad}
 \title{Default Generalized Sparse Additive Model Solver with single
 Prespecified variational penalty and lambda's}
 \usage{
 gspam_c(data, y, prox_type, loss_type, lambda1 = 0, lambda2 = 0)
-
-loss(y, theta, type)
-
-grad(y, theta, type)
 }
 \arguments{
 \item{data}{n by p matrix of inputs}
@@ -25,24 +19,8 @@ grad(y, theta, type)
 \item{lambda1}{sparsity penalty}
 
 \item{lambda2}{variational penalty}
-
-\item{theta}{fitted values}
-
-\item{type}{type of loss to use}
-
-\item{y}{target of loss}
-
-\item{y}{target of loss}
-
-\item{theta}{fitted values}
-
-\item{type}{type of loss to use}
 }
 \description{
 Fit model as specified by user for a single variational penalty
 (matrix of X-values).
-
-Applies specified loss to two vectors
-
-Applies specified grad of loss to two vectors
 }

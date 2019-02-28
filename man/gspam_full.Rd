@@ -12,9 +12,11 @@ gspam_full(data, y, prox_type, loss_type, alpha)
 
 \item{y}{response column vector}
 
-\item{type}{of prox to use}
+\item{prox_type}{type of prox to use}
 
-\item{scalar}{value lambda2=alpha*lambda1}
+\item{loss_type}{type of loss to use}
+
+\item{alpha}{scalar value lambda2=alpha*lambda1}
 }
 \description{
 Fit model as specified by user for calculated range of lambda
