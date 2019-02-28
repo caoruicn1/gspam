@@ -28,6 +28,4 @@ Maintainer: \packageMaintainer{gspam}
 ~~ Optional links to other man pages, e.g. ~~
 ~~ \code{\link[<pkg>:<pkg>-package]{<pkg>}} ~~
 }
-\examples{
-~~ simple examples of the most important functions ~~
-}
+

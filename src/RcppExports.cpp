@@ -38,21 +38,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// gspam_c_print
-void gspam_c_print(arma::mat data, arma::vec y, std::vector<std::string> prox_type, std::string loss_type, arma::vec lambda1, arma::vec lambda2);
-RcppExport SEXP _gspam_gspam_c_print(SEXP dataSEXP, SEXP ySEXP, SEXP prox_typeSEXP, SEXP loss_typeSEXP, SEXP lambda1SEXP, SEXP lambda2SEXP) {
-BEGIN_RCPP
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::mat >::type data(dataSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type y(ySEXP);
-    Rcpp::traits::input_parameter< std::vector<std::string> >::type prox_type(prox_typeSEXP);
-    Rcpp::traits::input_parameter< std::string >::type loss_type(loss_typeSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type lambda1(lambda1SEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type lambda2(lambda2SEXP);
-    gspam_c_print(data, y, prox_type, loss_type, lambda1, lambda2);
-    return R_NilValue;
-END_RCPP
-}
 // gspam_full
 Rcpp::List gspam_full(arma::mat data, arma::vec y, std::vector<std::string> prox_type, std::string loss_type, double alpha);
 RcppExport SEXP _gspam_gspam_full(SEXP dataSEXP, SEXP ySEXP, SEXP prox_typeSEXP, SEXP loss_typeSEXP, SEXP alphaSEXP) {
@@ -113,7 +98,6 @@ END_RCPP
 static const R_CallMethodDef CallEntries[] = {
     {"_gspam_gspam_c", (DL_FUNC) &_gspam_gspam_c, 6},
     {"_gspam_gspam_c_vec", (DL_FUNC) &_gspam_gspam_c_vec, 6},
-    {"_gspam_gspam_c_print", (DL_FUNC) &_gspam_gspam_c_print, 6},
     {"_gspam_gspam_full", (DL_FUNC) &_gspam_gspam_full, 5},
     {"_gspam_get_lambdas", (DL_FUNC) &_gspam_get_lambdas, 5},
     {"_gspam_loss", (DL_FUNC) &_gspam_loss, 3},

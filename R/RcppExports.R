@@ -29,20 +29,6 @@ gspam_c_vec <- function(data, y, prox_type, loss_type, lambda1, lambda2) {
     .Call('_gspam_gspam_c_vec', PACKAGE = 'gspam', data, y, prox_type, loss_type, lambda1, lambda2)
 }
 
-#' @title Default Generalized Sparse Additive Model Solver with vector of
-#' prespecified variational penalties and sparsity penalties
-#' @description Fit model as specified by user for a single variational penalty
-#' (matrix of X-values).
-#' @name gspam_c_vec
-#' @param data n by p matrix of inputs
-#' @param y response column vector
-#' @param type of prox to use
-#' @param sparsity penalties
-#' @param variational penalties
-gspam_c_print <- function(data, y, prox_type, loss_type, lambda1, lambda2) {
-    invisible(.Call('_gspam_gspam_c_print', PACKAGE = 'gspam', data, y, prox_type, loss_type, lambda1, lambda2))
-}
-
 #' @title Default Generalized Sparse Additive Model Solver that calculates
 #' lambda path based on mixture value.
 #' @description Fit model as specified by user for calculated range of lambda
